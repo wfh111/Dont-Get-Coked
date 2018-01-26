@@ -320,7 +320,6 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.floor(225 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 4;
-		//  var type = 0;
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 		  while(lane === this.previous) {
@@ -328,7 +327,6 @@ Obstacle_Spawner.prototype.update = function () {
 			  lane %= 3;
 		  }
 		  this.previous = lane;
-		//  var lane = 2;
 		  switch(type) {
 		  case 0: //Spikes
 		  	this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
