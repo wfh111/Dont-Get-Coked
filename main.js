@@ -131,7 +131,7 @@ function MushroomDude(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 189, 230, 0.10, 14, true);
     this.x = 0;
     this.y = 0;
-    this.speed = 3;
+    this.speed = 5;
     this.game = game;
     this.Right = false;
     this.Left = false;
