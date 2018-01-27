@@ -7,7 +7,7 @@ var lane_size = 100;
 var left_change = 0;
 var right_change = 0;
 var gameScore = 0;
-var background_speed = 1;
+var background_speed = 3;
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -67,7 +67,7 @@ Animation.prototype.isDone = function () {
 function Background(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = 2;
+    this.speed = 3;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
@@ -91,14 +91,17 @@ Background.prototype.draw = function () {
 };
 
 Background.prototype.update = function () {
-  if (this.speed <= 5) {
+  if (this.speed <= 7) {
     this.speed *= 1.0001;
     background_speed = this.speed;
   }
-  if (this.speed >= 3) {
+  if (this.speed >= 4) {
     // trigger level change
   }
-  if (this.speed >= 4) {
+  if (this.speed >= 5) {
+    // triger level change
+  }
+  if (this.speed >= 6) {
     // triger level change
   }
 };
