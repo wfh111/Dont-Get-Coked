@@ -1,8 +1,8 @@
 var AM = new AssetManager();
 var sheetHeight = 490;
 var right_lane = 100;
-var left_lane = -100;
-var middle_lane = 0;
+var left_lane = -75;
+var middle_lane = 15;
 var lane_size = 100;
 var left_change = 0;
 var right_change = 0;
@@ -128,9 +128,9 @@ Score.prototype.draw = function() {
 
 //original animation spritesheet, 189, 230, 5, 0.10, 14, true,1
 function MushroomDude(game, spritesheet) {
-    this.animation = new Animation(spritesheet, 0, 0, 189, 230, 0.10, 14, true);
-    this.x = 0;
-    this.y = 0;
+    this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
+    this.x = middle_lane;
+    this.y = 100;
     this.speed = 5;
     this.game = game;
     this.Right = false;
@@ -140,7 +140,7 @@ function MushroomDude(game, spritesheet) {
 }
 
 MushroomDude.prototype.draw = function () {
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.5);
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.2);
 }
 
 MushroomDude.prototype.update = function () {
@@ -192,6 +192,22 @@ MushroomDude.prototype.update = function () {
     if (this.Up) {
       this.y -= this.game.clockTick * this.speed;
     }
+}
+
+function OminousFigure(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 0, 0, 93, 84, 0.05, 5, true);
+    this.x = middle_lane - 100;
+    this.y = 210;
+    this.speed = 1;
+    this.game = game;
+    this.ctx = game.ctx;
+}
+
+OminousFigure.prototype.draw = function () {
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 3);
+}
+
+OminousFigure.prototype.update = function () {
 }
 
 //0,512
@@ -358,7 +374,8 @@ Obstacle_Spawner.prototype.draw = function () {
 
 AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/obstacles.png");
-AM.queueDownload("./img/mushroomdude.png");
+AM.queueDownload("./img/theboy.png");
+AM.queueDownload("./img/enem.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -369,8 +386,9 @@ AM.downloadAll(function () {
     gameEngine.start();
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/bg3.png")));
     gameEngine.addEntity(new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png")));
+    gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/theboy.png")));
+    gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/enem.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "#FFFFFF", 280, 480));
-    gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/mushroomdude.png")));
 
     console.log("All Done!");
 });
