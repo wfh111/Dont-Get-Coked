@@ -324,14 +324,6 @@ Branch.prototype.draw = function () {
     Entity.prototype.draw.call(this);
 };
 
-function Obstacle_Spawner(game, spritesheet) {
-	this.obstacles = [];
-	this.game = game;
-	this.spritesheet = spritesheet;
-	this.counter = 0;
-	this.previous = -1;
-};
-
 function Wall (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 0, 200, 200, 200, 1, 1, true);
 	this.speed = 60;
@@ -358,12 +350,19 @@ Wall.prototype.draw = function () {
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
     Entity.prototype.draw.call(this);
 };
+function Obstacle_Spawner(game, spritesheet) {
+	this.obstacles = [];
+	this.game = game;
+	this.spritesheet = spritesheet;
+	this.counter = 0;
+	this.previous = -1;
+};
 
 Obstacle_Spawner.prototype = new Entity();
 Obstacle_Spawner.prototype.constructor = Obstacle_Spawner;
 
 Obstacle_Spawner.prototype.update = function () {
-	if(this.counter % Math.floor(225 / background_speed) === 0){
+	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
 //		  type = 4; //Testing individual obstacles
