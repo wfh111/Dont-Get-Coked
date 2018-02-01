@@ -332,15 +332,44 @@ function Obstacle_Spawner(game, spritesheet) {
 	this.previous = -1;
 };
 
+function Wall (game, spritesheet, lane) {
+	this.animation = new Animation(spritesheet, 0, 0, 200, 200, 200, 1, 1, true);
+	this.speed = 60;
+	this.ctx = game.ctx;
+	if (lane === 0) {
+    	Entity.call(this, game, 75, -200);
+    } else if (lane === 1) {
+    	Entity.call(this, game, 160, -200);
+    } else {
+    	Entity.call(this, game, 250, -200);
+    }
+};
+
+Wall.prototype = new Entity();
+Wall.prototype.constructor = Wall;
+
+Wall.prototype.update = function() {
+	this.speed = 60 * background_speed;
+	this.y += this.game.clockTick * this.speed
+	Entity.prototype.update.call(this);
+};
+
+Wall.prototype.draw = function () {
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
+    Entity.prototype.draw.call(this);
+};
+
 Obstacle_Spawner.prototype = new Entity();
 Obstacle_Spawner.prototype.constructor = Obstacle_Spawner;
 
 Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.floor(225 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
-		  type %= 4;
+		  type %= 5;
+//		  type = 4; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
+//		  lane = 0; //Test obstacle in specific lane
 		  while(lane === this.previous) {
 			  lane = Math.floor(Math.random() * 10) + 1;
 			  lane %= 3;
@@ -348,17 +377,22 @@ Obstacle_Spawner.prototype.update = function () {
 		  this.previous = lane;
 		  switch(type) {
 		  case 0: //Spikes
-		  	this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
-		  	break;
+		  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+		  		break;
 		  case 1: //Crate
-		      this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
-		      break;
+		      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+		      	break;
 		  case 2: //Oil
-		  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
-		  	break;
+			  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+			  	break;
 		  case 3: //Branch
-		  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
-		  	break;
+			  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+			  	break;
+		  case 4: //Wall
+			  	this.obstacles.push(new Wall(this.game,AM.getAsset("./img/coke_wall.png"), 0));
+			  	this.obstacles.push(new Wall(this.game,AM.getAsset("./img/coke_wall.png"), 1));
+			  	this.obstacles.push(new Wall(this.game,AM.getAsset("./img/coke_wall.png"), 2));
+			  	break;
 		  }
 	}
 	var numObstacle = this.obstacles.length;
@@ -379,6 +413,7 @@ AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/enem.png");
+AM.queueDownload("./img/coke_wall.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
