@@ -8,6 +8,8 @@ var left_change = 0;
 var right_change = 0;
 var gameScore = 0;
 var background_speed = 3;
+var spike_x;
+var spike_y;
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -133,7 +135,7 @@ Score.prototype.draw = function() {
 function MushroomDude(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
     this.x = middle_lane;
-    this.y = 100;
+    this.y = 0;
     this.speed = 5;
     this.game = game;
     this.Right = false;
@@ -150,7 +152,13 @@ MushroomDude.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
-
+    var rect1 ={x:this.x, y:this.y, width:67.6, height:108};
+    var rect2 ={x:spike_x, y:spike_y, width:56.8, height:65.2};
+    if (rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x &&
+      rect1.y < rect2.y + rect2.height && rect1.height + rect1.y > rect2.y) { // collision detected!
+          console.log("Collision detected with spike@@@@ \n REEEEEEEEEEEEEEEEEeeeee");
+          this.y += this.game.clockTick * 60;
+    }
     if (this.game.rightButton) {
       this.Right = true;
     } else {
@@ -232,7 +240,9 @@ Spike.prototype.constructor = Spike;
 
 Spike.prototype.update = function() {
 	this.speed = 60 * background_speed;
-	this.y += this.game.clockTick * this.speed
+	this.y += this.game.clockTick * this.speed;
+  spike_x = this.x;
+  spike_y = this.y;
 	Entity.prototype.update.call(this);
 };
 
