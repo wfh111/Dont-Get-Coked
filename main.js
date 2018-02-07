@@ -3,7 +3,8 @@ var sheetHeight = 490;
 var right_lane = 100;
 var left_lane = -75;
 var middle_lane = 15;
-var lane_size = 100;
+var current_lane;
+var lane_size = 85;
 var left_change = 0;
 var right_change = 0;
 var gameScore = 0;
@@ -152,6 +153,14 @@ MushroomDude.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
+    if (this.x <= left_lane + (lane_size / 2)) {
+      current_lane = left_lane;
+    } else if (this.x > (left_lane + (lane_size / 2)) && this.x <= (right_lane - (lane_size / 2))) {
+      current_lane = middle_lane;
+    } else {
+      current_lane = right_lane;
+    }
+
     var rect1 ={x:this.x, y:this.y, width:67.6, height:108};
     var rect2 ={x:spike_x, y:spike_y, width:56.8, height:65.2};
     if (rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x &&
