@@ -418,6 +418,12 @@ Obstacle_Spawner.prototype.update = function () {
 		this.obstacles[i].update();
 	}
 	this.counter++;
+	for(i = 0; i < numObstacle; i++) {
+		if(this.obstacles[i] !== undefined && this.obstacles[i].y > 510) {
+			this.obstacles.splice(i,1);
+			console.log("Spliced " + i);
+		}
+	}
 };
 
 Obstacle_Spawner.prototype.draw = function () {
