@@ -232,15 +232,15 @@ OminousFigure.prototype.update = function () {
 
 //0,512
 function Spike (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 520, 142, 163, 810, 1, 1, true);
+	this.animation = new Animation(spritesheet, 0, 2450, 142, 163, 810, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
 	if (lane === 0) {
-    	Entity.call(this, game, 85, -200);
+    	Entity.call(this, game, 80, -200);
     } else if (lane === 1) {
-    	Entity.call(this, game, 173, -200);
+    	Entity.call(this, game, 167, -200);
     } else {
-    	Entity.call(this, game, 260, -200);
+    	Entity.call(this, game, 255, -200);
     }
 };
 
@@ -262,7 +262,7 @@ Spike.prototype.draw = function () {
 //0,0
 // inheritance
 function Crate(game, spritesheet, lane) {
-    this.animation = new Animation(spritesheet, 0, 0, 512, 512, 810, 1, 1, true);
+    this.animation = new Animation(spritesheet, 0, 1905, 512, 512, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
     if (lane === 0) {
@@ -279,7 +279,7 @@ Crate.prototype.constructor = Crate;
 
 Crate.prototype.update = function () {
 	this.speed = 60 * background_speed;
-	this.y += this.game.clockTick * this.speed
+	this.y += this.game.clockTick * this.speed;
 	Entity.prototype.update.call(this);
 };
 
@@ -289,15 +289,15 @@ Crate.prototype.draw = function () {
 };
 //0, 1300
 function Oil(game, spritesheet, lane) {
-    this.animation = new Animation(spritesheet, 0, 1450, 776, 450, 810, 1, 1, true);
+    this.animation = new Animation(spritesheet, 100, 3300, 776, 450, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
     if (lane === 0) {
-    	Entity.call(this, game, 40, -200);
+    	Entity.call(this, game, 57, -200);
     } else if (lane === 1) {
-    	Entity.call(this, game, 128, -200);
+    	Entity.call(this, game, 145, -200);
     } else {
-    	Entity.call(this, game, 215, -200);
+    	Entity.call(this, game, 230, -200);
     }
 };
 
@@ -306,7 +306,7 @@ Oil.prototype.constructor = Oil;
 
 Oil.prototype.update = function () {
 	this.speed = 60 * background_speed;
-	this.y += this.game.clockTick * this.speed
+	this.y += this.game.clockTick * this.speed;
 	Entity.prototype.update.call(this);
 };
 
@@ -316,7 +316,7 @@ Oil.prototype.draw = function () {
 };
 //0, 675
 function Branch(game, spritesheet, lane) {
-    this.animation = new Animation(spritesheet, 0, 675, 800, 600, 810, 1, 1, true);
+    this.animation = new Animation(spritesheet, 0, 2700, 800, 600, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
     if (lane === 0) {
@@ -334,7 +334,7 @@ Branch.prototype.constructor = Branch;
 
 Branch.prototype.update = function () {
 	this.speed = 60 * background_speed;
-	this.y += this.game.clockTick * this.speed
+	this.y += this.game.clockTick * this.speed;
 	Entity.prototype.update.call(this);
 };
 
@@ -344,15 +344,15 @@ Branch.prototype.draw = function () {
 };
 
 function Wall (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 0, 200, 200, 200, 1, 1, true);
+	this.animation = new Animation(spritesheet, 0, 1550, 200, 200, 200, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
 	if (lane === 0) {
-    	Entity.call(this, game, 75, -200);
+    	Entity.call(this, game, 69, -200);
     } else if (lane === 1) {
-    	Entity.call(this, game, 160, -200);
+    	Entity.call(this, game, 157, -200);
     } else {
-    	Entity.call(this, game, 250, -200);
+    	Entity.call(this, game, 245, -200);
     }
 };
 
@@ -361,7 +361,7 @@ Wall.prototype.constructor = Wall;
 
 Wall.prototype.update = function() {
 	this.speed = 60 * background_speed;
-	this.y += this.game.clockTick * this.speed
+	this.y += this.game.clockTick * this.speed;
 	Entity.prototype.update.call(this);
 };
 
@@ -369,6 +369,57 @@ Wall.prototype.draw = function () {
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
     Entity.prototype.draw.call(this);
 };
+
+function Target_Coke (game, spritesheet, lane) {
+	this.animation = new Animation(spritesheet, 0, 990, 320, 185, .03, 14, true, false);
+	this.speed = 120;
+	this.ctx = game.ctx;
+	if (lane === left_lane) {
+    	Entity.call(this, game, 80, -200);
+    } else if (lane === middle_lane) {
+    	Entity.call(this, game, 170, -200);
+    } else {
+    	Entity.call(this, game, 257, -200);
+    }
+};
+
+Target_Coke.prototype = new Entity();
+Target_Coke.prototype.constructor = Target_Coke;
+
+Target_Coke.prototype.update = function() {
+	this.speed = 110 * background_speed;
+	this.y += this.game.clockTick * this.speed;
+	Entity.prototype.update.call(this);
+};
+
+Target_Coke.prototype.draw = function () {
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
+    Entity.prototype.draw.call(this);
+};
+
+//function Side_Coke (game, spritesheet, lane) {
+//	this.animation = new Animation(spritesheet, 0, 0, 190, 330, .2, 14, true, true);
+//	this.speed = 80;
+//	this.direction = "left";
+//	this.ctx = game.ctx;
+//    Entity.call(this, game, 300, 0);
+//};
+//
+//Side_Coke.prototype = new Entity();
+//Side_Coke.prototype.constructor = Side_Coke;
+//
+//Side_Coke.prototype.update = function() {
+//	this.speed = 100 * background_speed;
+//	this.x -= this.game.clockTick * this.speed;
+//	this.y += this.game.clockTick * (60 * background_speed);
+//	Entity.prototype.update.call(this);
+//};
+//
+//Side_Coke.prototype.draw = function () {
+//	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
+//    Entity.prototype.draw.call(this);
+//};
+
 function Obstacle_Spawner(game, spritesheet) {
 	this.obstacles = [];
 	this.game = game;
@@ -384,7 +435,7 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
-//		  type = 4; //Testing individual obstacles
+//		  type = 5; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
@@ -407,11 +458,16 @@ Obstacle_Spawner.prototype.update = function () {
 			  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
 			  	break;
 		  case 4: //Wall
-			  	this.obstacles.push(new Wall(this.game,AM.getAsset("./img/coke_wall.png"), 0));
-			  	this.obstacles.push(new Wall(this.game,AM.getAsset("./img/coke_wall.png"), 1));
-			  	this.obstacles.push(new Wall(this.game,AM.getAsset("./img/coke_wall.png"), 2));
+			  	this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
+			  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
+			  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));
 			  	break;
+//		  case 5: //Side_Coke
+//			  this.obstacles.push(new Side_Coke(this.game, this.spritesheet, 3));
+//			  break;
 		  }
+	} else if(this.counter % Math.ceil(1240 / background_speed) === 0) {
+		this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
 	}
 	var numObstacle = this.obstacles.length;
 	for(i = 0; i < numObstacle; i++) {
@@ -431,7 +487,6 @@ AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
-AM.queueDownload("./img/coke_wall.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
