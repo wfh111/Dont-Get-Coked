@@ -1,5 +1,5 @@
 var AM = new AssetManager();
-var sheetHeight = 490;
+var sheetHeight = 600;
 var right_lane = 100;
 var left_lane = -75;
 var middle_lane = 15;
@@ -89,8 +89,10 @@ Background.prototype.draw = function () {
                      this.x, this.y - sheetHeight);
 
       // If the image scrolled off the screen, reset
-      if (this.y >= sheetHeight)
-        this.y = 0;
+      if (this.speed < 4) {
+        if (this.y >= sheetHeight)
+          this.y = 0;
+      }
 };
 
 Background.prototype.update = function () {
@@ -98,14 +100,111 @@ Background.prototype.update = function () {
     this.speed *= 1.0001;
     background_speed = this.speed;
   }
-  if (this.speed >= 4) {
-    // trigger level change
+};
+
+// no inheritance
+function Background2(game, spritesheet) {
+    this.x = 0;
+    this.y = 0;
+    this.speed = 3;
+    this.spritesheet = spritesheet;
+    this.game = game;
+    this.ctx = game.ctx;
+};
+
+Background2.prototype.draw = function () {
+    //this.ctx.drawImage(this.spritesheet,
+      //             this.x, this.y);
+      // Pan background
+      this.y += this.speed;
+      this.ctx.drawImage(this.spritesheet,
+                     this.x, this.y);
+
+      // Draw another image at the top edge of the first image
+      this.ctx.drawImage(this.spritesheet,
+                     this.x, this.y - sheetHeight);
+
+      // If the image scrolled off the screen, reset
+      if (this.speed < 5) {
+        if (this.y >= sheetHeight)
+          this.y = 0;
+      }
+};
+
+Background2.prototype.update = function () {
+  if (this.speed <= 7) {
+    this.speed *= 1.0001;
+    background_speed = this.speed;
   }
-  if (this.speed >= 5) {
-    // triger level change
+};
+
+// no inheritance
+function Background3(game, spritesheet) {
+    this.x = 0;
+    this.y = 0;
+    this.speed = 3;
+    this.spritesheet = spritesheet;
+    this.game = game;
+    this.ctx = game.ctx;
+};
+
+Background3.prototype.draw = function () {
+    //this.ctx.drawImage(this.spritesheet,
+      //             this.x, this.y);
+      // Pan background
+      this.y += this.speed;
+      this.ctx.drawImage(this.spritesheet,
+                     this.x, this.y);
+
+      // Draw another image at the top edge of the first image
+      this.ctx.drawImage(this.spritesheet,
+                     this.x, this.y - sheetHeight);
+
+      // If the image scrolled off the screen, reset
+      if (this.speed < 6) {
+        if (this.y >= sheetHeight)
+          this.y = 0;
+      }
+};
+
+Background3.prototype.update = function () {
+  if (this.speed <= 7) {
+    this.speed *= 1.0001;
+    background_speed = this.speed;
   }
-  if (this.speed >= 6) {
-    // triger level change
+};
+
+// no inheritance
+function Background4(game, spritesheet) {
+    this.x = 0;
+    this.y = 0;
+    this.speed = 3;
+    this.spritesheet = spritesheet;
+    this.game = game;
+    this.ctx = game.ctx;
+};
+
+Background4.prototype.draw = function () {
+    //this.ctx.drawImage(this.spritesheet,
+      //             this.x, this.y);
+      // Pan background
+      this.y += this.speed;
+      this.ctx.drawImage(this.spritesheet,
+                     this.x, this.y);
+
+      // Draw another image at the top edge of the first image
+      this.ctx.drawImage(this.spritesheet,
+                     this.x, this.y - sheetHeight);
+
+      // If the image scrolled off the screen, reset
+      if (this.y >= sheetHeight)
+        this.y = 0;
+};
+
+Background4.prototype.update = function () {
+  if (this.speed <= 7) {
+    this.speed *= 1.0001;
+    background_speed = this.speed;
   }
 };
 
@@ -217,7 +316,7 @@ MushroomDude.prototype.update = function () {
 function OminousFigure(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 201.2, 117.7, 0.07, 14, true);
     this.x = middle_lane - 125;
-    this.y = 310;
+    this.y = 430;
     this.speed = 1;
     this.game = game;
     this.ctx = game.ctx;
@@ -387,7 +486,7 @@ Target_Coke.prototype = new Entity();
 Target_Coke.prototype.constructor = Target_Coke;
 
 Target_Coke.prototype.update = function() {
-	this.speed = 110 * background_speed;
+	this.speed = 90 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	Entity.prototype.update.call(this);
 };
@@ -484,6 +583,9 @@ Obstacle_Spawner.prototype.draw = function () {
 };
 
 AM.queueDownload("./img/bg3.png");
+AM.queueDownload("./img/bg4.png");
+AM.queueDownload("./img/bg5.png");
+AM.queueDownload("./img/bg6.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
@@ -495,6 +597,9 @@ AM.downloadAll(function () {
     var gameEngine = new GameEngine();
     gameEngine.init(ctx);
     gameEngine.start();
+    gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
+    gameEngine.addEntity(new Background3(gameEngine, AM.getAsset("./img/bg5.png")));
+    gameEngine.addEntity(new Background2(gameEngine, AM.getAsset("./img/bg4.png")));
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/bg3.png")));
     gameEngine.addEntity(new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png")));
     gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/theboy.png")));
