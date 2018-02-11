@@ -215,16 +215,16 @@ MushroomDude.prototype.update = function () {
 }
 
 function OminousFigure(game, spritesheet) {
-    this.animation = new Animation(spritesheet, 0, 0, 93, 84, 0.05, 5, true);
-    this.x = middle_lane - 100;
-    this.y = 210;
+    this.animation = new Animation(spritesheet, 0, 0, 201.2, 117.7, 0.07, 14, true);
+    this.x = middle_lane - 125;
+    this.y = 310;
     this.speed = 1;
     this.game = game;
     this.ctx = game.ctx;
 }
 
 OminousFigure.prototype.draw = function () {
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 3);
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 1.5);
 }
 
 OminousFigure.prototype.update = function () {
@@ -418,12 +418,6 @@ Obstacle_Spawner.prototype.update = function () {
 		this.obstacles[i].update();
 	}
 	this.counter++;
-	for(i = 0; i < numObstacle; i++) {
-		if(this.obstacles[i] !== undefined && this.obstacles[i].y > 510) {
-			this.obstacles.splice(i,1);
-			console.log("Spliced " + i);
-		}
-	}
 };
 
 Obstacle_Spawner.prototype.draw = function () {
@@ -436,7 +430,7 @@ Obstacle_Spawner.prototype.draw = function () {
 AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
-AM.queueDownload("./img/enem.png");
+AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/coke_wall.png");
 
 AM.downloadAll(function () {
@@ -449,7 +443,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/bg3.png")));
     gameEngine.addEntity(new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png")));
     gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/theboy.png")));
-    gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/enem.png")));
+    gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "#FFFFFF", 280, 480));
 
     console.log("All Done!");
