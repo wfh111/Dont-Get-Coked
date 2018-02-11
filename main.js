@@ -208,6 +208,23 @@ Background4.prototype.update = function () {
   }
 };
 
+function BoundingBox(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+
+    this.left = x;
+    this.top = y;
+    this.right = this.left + width;
+    this.bottom = this.top + height;
+}
+
+BoundingBox.prototype.collide = function (oth) {
+    if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) return true;
+    return false;
+}
+
 function Score(game, score, color, x, y) {
 	this.color = color;
 	this.x = x;
@@ -331,9 +348,10 @@ OminousFigure.prototype.update = function () {
 
 //0,512
 function Spike (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 2450, 142, 163, 810, 1, 1, true);
+	this.animation = new Animation(spritesheet, 0, 2450, 142, 163, 1, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
+	this.box = true;
 	if (lane === 0) {
     	Entity.call(this, game, 80, -200);
     } else if (lane === 1) {
@@ -341,6 +359,7 @@ function Spike (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 255, -200);
     }
+	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 75, this.animation.frameHeight - 90);
 };
 
 Spike.prototype = new Entity();
@@ -351,10 +370,17 @@ Spike.prototype.update = function() {
 	this.y += this.game.clockTick * this.speed;
   spike_x = this.x;
   spike_y = this.y;
+  this.boundingbox.y = this.y;
 	Entity.prototype.update.call(this);
 };
 
 Spike.prototype.draw = function () {
+	if (this.box) {
+//        this.ctx.strokeStyle = "red";
+//        this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+        this.ctx.strokeStyle = "blue";
+        this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
     Entity.prototype.draw.call(this);
 };
@@ -364,6 +390,7 @@ function Crate(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 0, 1905, 512, 512, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
+	this.box = true;
     if (lane === 0) {
     	Entity.call(this, game, 87, -200);
     } else if (lane === 1) {
@@ -371,6 +398,7 @@ function Crate(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 260, -200);
     }
+	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 460, this.animation.frameHeight - 460);
 };
 
 Crate.prototype = new Entity();
@@ -379,18 +407,26 @@ Crate.prototype.constructor = Crate;
 Crate.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
+	this.boundingbox.y = this.y;
 	Entity.prototype.update.call(this);
 };
 
 Crate.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
     Entity.prototype.draw.call(this);
 };
 //0, 1300
 function Oil(game, spritesheet, lane) {
-    this.animation = new Animation(spritesheet, 100, 3300, 776, 450, 810, 1, 1, true);
+    this.animation = new Animation(spritesheet, 100, 3390, 776, 450, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
+	this.box = true;
     if (lane === 0) {
     	Entity.call(this, game, 57, -200);
     } else if (lane === 1) {
@@ -398,6 +434,7 @@ function Oil(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 230, -200);
     }
+	this.boundingbox = new BoundingBox(this.x + 30, this.y, this.animation.frameWidth - 724, this.animation.frameHeight - 380);
 };
 
 Oil.prototype = new Entity();
@@ -406,10 +443,17 @@ Oil.prototype.constructor = Oil;
 Oil.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
+	this.boundingbox.y = this.y;
 	Entity.prototype.update.call(this);
 };
 
 Oil.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//.2
     Entity.prototype.draw.call(this);
 };
@@ -418,6 +462,7 @@ function Branch(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 0, 2700, 800, 600, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
+	this.box = true;
     if (lane === 0) {
     	Entity.call(this, game, 70, -200);
     } else if (lane === 1) {
@@ -425,7 +470,7 @@ function Branch(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 240, -200);
     }
-
+	this.boundingbox = new BoundingBox(this.x + 5, this.y , this.animation.frameWidth - 720, this.animation.frameHeight - 545);
 };
 
 Branch.prototype = new Entity();
@@ -434,18 +479,26 @@ Branch.prototype.constructor = Branch;
 Branch.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
+	this.boundingbox.y = this.y;
 	Entity.prototype.update.call(this);
 };
 
 Branch.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1); //0.1
     Entity.prototype.draw.call(this);
 };
 
 function Wall (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 1550, 200, 200, 200, 1, 1, true);
+	this.animation = new Animation(spritesheet, 0, 1580, 200, 200, 200, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
+	this.box = true;
 	if (lane === 0) {
     	Entity.call(this, game, 69, -200);
     } else if (lane === 1) {
@@ -453,6 +506,7 @@ function Wall (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 245, -200);
     }
+	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 138);
 };
 
 Wall.prototype = new Entity();
@@ -461,10 +515,17 @@ Wall.prototype.constructor = Wall;
 Wall.prototype.update = function() {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
+	this.boundingbox.y = this.y;
 	Entity.prototype.update.call(this);
 };
 
 Wall.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
     Entity.prototype.draw.call(this);
 };
@@ -473,6 +534,7 @@ function Target_Coke (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 990, 320, 185, .03, 14, true, false);
 	this.speed = 120;
 	this.ctx = game.ctx;
+	this.box = true;
 	if (lane === left_lane) {
     	Entity.call(this, game, 80, -200);
     } else if (lane === middle_lane) {
@@ -480,18 +542,26 @@ function Target_Coke (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 257, -200);
     }
+	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 255, this.animation.frameHeight - 148);
 };
 
 Target_Coke.prototype = new Entity();
 Target_Coke.prototype.constructor = Target_Coke;
 
 Target_Coke.prototype.update = function() {
-	this.speed = 90 * background_speed;
+	this.speed =  115 * background_speed;
 	this.y += this.game.clockTick * this.speed;
+	this.boundingbox.y = this.y;
 	Entity.prototype.update.call(this);
 };
 
 Target_Coke.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
     Entity.prototype.draw.call(this);
 };
@@ -534,7 +604,7 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
-//		  type = 5; //Testing individual obstacles
+//		  type = 2; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
