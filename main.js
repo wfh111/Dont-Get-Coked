@@ -258,10 +258,18 @@ function MushroomDude(game, spritesheet) {
     this.Right = false;
     this.Left = false;
     this.Up = false;
+    this.box = true;
     this.ctx = game.ctx;
+	this.boundingbox = new BoundingBox(this.x + 150, this.y + 100, this.animation.frameWidth  - 270, this.animation.frameHeight - 430);
 }
 
 MushroomDude.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.2);
 }
 
@@ -337,9 +345,17 @@ function OminousFigure(game, spritesheet) {
     this.speed = 1;
     this.game = game;
     this.ctx = game.ctx;
+    this.box = true;
+	this.boundingbox = new BoundingBox(this.x + 150, this.y + 110, this.animation.frameWidth + 105, this.animation.frameHeight);
 }
 
 OminousFigure.prototype.draw = function () {
+	if (this.box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 1.5);
 }
 
