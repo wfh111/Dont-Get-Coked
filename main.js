@@ -267,10 +267,11 @@ MushroomDude.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.2);
+	this.boundingbox.y = this.y + 100;
 }
 
 MushroomDude.prototype.update = function () {
@@ -303,6 +304,7 @@ MushroomDude.prototype.update = function () {
     if (this.Right) {
       if (this.x < right_lane) {
         this.x += this.speed;
+        this.boundingbox.x += this.speed;
         right_change += this.speed;
       } else {
         right_change = 0;
@@ -321,6 +323,7 @@ MushroomDude.prototype.update = function () {
     if (this.Left) {
       if (this.x > left_lane) {
         this.x -= this.speed;
+        this.boundingbox.x -= this.speed;
         left_change += this.speed;
       } else {
         left_change = 0;
@@ -335,6 +338,7 @@ MushroomDude.prototype.update = function () {
     }
     if (this.Up) {
       this.y -= this.game.clockTick * this.speed;
+      this.boundingbox.y -= this.game.clockTick * this.speed;
     }
 }
 
@@ -353,7 +357,7 @@ OminousFigure.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 1.5);
@@ -394,7 +398,7 @@ Spike.prototype.draw = function () {
 	if (this.box) {
 //        this.ctx.strokeStyle = "red";
 //        this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-        this.ctx.strokeStyle = "blue";
+        this.ctx.strokeStyle = "yellow";
         this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
@@ -431,7 +435,7 @@ Crate.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
@@ -467,7 +471,7 @@ Oil.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//.2
@@ -486,7 +490,7 @@ function Branch(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 240, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 5, this.y , this.animation.frameWidth - 720, this.animation.frameHeight - 545);
+	this.boundingbox = new BoundingBox(this.x + 5, this.y , this.animation.frameWidth - 725, this.animation.frameHeight - 545);
 };
 
 Branch.prototype = new Entity();
@@ -503,7 +507,7 @@ Branch.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1); //0.1
@@ -539,7 +543,7 @@ Wall.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
@@ -575,7 +579,7 @@ Target_Coke.prototype.draw = function () {
 	if (this.box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
-      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
