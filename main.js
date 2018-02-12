@@ -8,6 +8,7 @@ var lane_size = 85;
 var left_change = 0;
 var right_change = 0;
 var gameScore = 0;
+var current_level = 1;
 var background_speed = 3;
 var spike_x;
 var spike_y;
@@ -246,6 +247,29 @@ Score.prototype.update = function() {
 };
 Score.prototype.draw = function() {
 	this.ctx.fillText("SCORE: " + this.score, this.x, this.y);
+};
+
+function LevelDisplay(game, color, x, y) {
+	this.color = color;
+	this.x = x;
+	this.y = y;
+	this.ctx = game.ctx;
+	this.ctx.font = "24px Arial";
+	this.ctx.fillStyle = color;
+	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
+	Entity.call(this, game, x, y);
+}
+
+//Score.prototype = new Entity();
+LevelDisplay.prototype.constructor = LevelDisplay;
+LevelDisplay.prototype.update = function() {
+	//this.score += Math.floor(background_speed);
+  current_level = Math.floor(background_speed) - 2;
+	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
+	//Entity.prototype.update.call(this);
+};
+LevelDisplay.prototype.draw = function() {
+	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
 };
 
 //original animation spritesheet, 189, 230, 5, 0.10, 14, true,1
@@ -691,6 +715,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/theboy.png")));
     gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "#FFFFFF", 280, 480));
+    gameEngine.addEntity(new LevelDisplay(gameEngine, "#FFFFFF", 160, 200));
 
     console.log("All Done!");
 });
