@@ -557,7 +557,7 @@ function Wall (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 245, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 138);
+	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 145);
 };
 
 Wall.prototype = new Entity();
