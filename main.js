@@ -399,7 +399,7 @@ OminousFigure.prototype.update = function () {
 
 //0,512
 function Spike (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 2450, 142, 163, 1, 1, 1, true);
+	this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
 	this.box = true;
@@ -410,7 +410,7 @@ function Spike (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 255, -200);
     }
-	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 75, this.animation.frameHeight - 90);
+	this.boundingbox = new BoundingBox(this.x + 5, this.y, this.animation.frameWidth - 85, this.animation.frameHeight - 100);
 };
 
 Spike.prototype = new Entity();
@@ -515,13 +515,13 @@ function Branch(game, spritesheet, lane) {
     this.ctx = game.ctx;
 	this.box = true;
     if (lane === 0) {
-    	Entity.call(this, game, 70, -200);
+    	Entity.call(this, game, 65, -200);
     } else if (lane === 1) {
-    	Entity.call(this, game, 160, -200);
+    	Entity.call(this, game, 155, -200);
     } else {
     	Entity.call(this, game, 240, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 5, this.y , this.animation.frameWidth - 725, this.animation.frameHeight - 545);
+	this.boundingbox = new BoundingBox(this.x + 15, this.y , this.animation.frameWidth - 735, this.animation.frameHeight - 545);
 };
 
 Branch.prototype = new Entity();
@@ -655,7 +655,7 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
-//		  type = 2; //Testing individual obstacles
+//		  type = 3; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
