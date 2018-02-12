@@ -265,7 +265,7 @@ LevelDisplay.prototype.constructor = LevelDisplay;
 LevelDisplay.prototype.update = function() {
 	//this.score += Math.floor(background_speed);
   current_level = Math.floor(background_speed) - 2;
-  if ((background_speed - Math.floor(background_speed) > 0.1) && background_speed < 7) {
+  if ((background_speed - Math.floor(background_speed) > 0.1) || background_speed >= 7) {
     this.x = 600;
     this.y = 600;
   } else {
