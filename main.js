@@ -254,7 +254,7 @@ function LevelDisplay(game, color, x, y) {
 	this.x = x;
 	this.y = y;
 	this.ctx = game.ctx;
-	this.ctx.font = "24px Arial";
+	this.ctx.font = "15px Arial";
 	this.ctx.fillStyle = color;
 	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
 	Entity.call(this, game, x, y);
@@ -265,6 +265,13 @@ LevelDisplay.prototype.constructor = LevelDisplay;
 LevelDisplay.prototype.update = function() {
 	//this.score += Math.floor(background_speed);
   current_level = Math.floor(background_speed) - 2;
+  if ((background_speed - Math.floor(background_speed) > 0.1) && background_speed < 7) {
+    this.x = 600;
+    this.y = 600;
+  } else {
+    this.x = 170;
+    this.y = 200;
+  }
 	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
 	//Entity.prototype.update.call(this);
 };
@@ -718,8 +725,8 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png")));
     gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/theboy.png")));
     gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png")));
-    gameEngine.addEntity(new Score(gameEngine, gameScore, "#FFFFFF", 280, 480));
-    gameEngine.addEntity(new LevelDisplay(gameEngine, "#FFFFFF", 160, 200));
+    gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
+    gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
 
     console.log("All Done!");
 });
