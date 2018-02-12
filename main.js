@@ -381,7 +381,7 @@ function OminousFigure(game, spritesheet) {
     this.game = game;
     this.ctx = game.ctx;
     this.box = true;
-	this.boundingbox = new BoundingBox(this.x + 150, this.y + 110, this.animation.frameWidth + 105, this.animation.frameHeight);
+	this.boundingbox = new BoundingBox(this.x + 150, this.y + 150, this.animation.frameWidth + 105, this.animation.frameHeight);
 }
 
 OminousFigure.prototype.draw = function () {
