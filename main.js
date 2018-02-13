@@ -297,7 +297,7 @@ function PepsiMan(game, spritesheet) {
     this.shooting = false;
     this.fired = false;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x, this.y, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
+	this.boundingbox = new BoundingBox(this.x, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
 PepsiMan.prototype.draw = function () {
@@ -315,7 +315,7 @@ PepsiMan.prototype.draw = function () {
       this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
   }
 	//this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
-	this.boundingbox = new BoundingBox(this.x, this.y, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
+	this.boundingbox = new BoundingBox(this.x, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
 PepsiMan.prototype.update = function () {
