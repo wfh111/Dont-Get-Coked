@@ -322,6 +322,10 @@ PepsiMan.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
+    if (this.y >= 150) { // makeshift stay alive scale
+      this.y -= 0.1;
+    }	
+    
     if (this.game.jumpButton) this.jumping = true;
     if (this.jumping) {
         if (this.jumpAnimation.isDone()) {
