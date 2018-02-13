@@ -10,7 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = false;
+var bound_box = true;
 var spike_x;
 var spike_y;
 
@@ -281,31 +281,31 @@ LevelDisplay.prototype.draw = function() {
 };
 
 //original animation spritesheet, 189, 230, 5, 0.10, 14, true,1
-function MushroomDude(game, spritesheet) {
+function PepsiMan(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
     this.x = middle_lane;
-    this.y = 0;
+    this.y = 100;
     this.speed = 5;
     this.game = game;
     this.Right = false;
     this.Left = false;
     this.Up = false;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x + 150, this.y + 100, this.animation.frameWidth  - 270, this.animation.frameHeight - 430);
+	this.boundingbox = new BoundingBox(this.x + 150, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
-MushroomDude.prototype.draw = function () {
+PepsiMan.prototype.draw = function () {
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.2);
-	this.boundingbox.y = this.y + 100;
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y, 0.2);
+	this.boundingbox = new BoundingBox(this.x + 150, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
-MushroomDude.prototype.update = function () {
+PepsiMan.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
@@ -401,6 +401,7 @@ function Spike (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
+	this.live = true;
 	if (lane === 0) {
     	Entity.call(this, game, 80, -200);
     } else if (lane === 1) {
@@ -439,6 +440,7 @@ function Crate(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 0, 1905, 512, 512, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
+    this.live = true;
     if (lane === 0) {
     	Entity.call(this, game, 87, -200);
     } else if (lane === 1) {
@@ -474,6 +476,7 @@ function Oil(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 100, 3390, 776, 450, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
+    this.live = true;
     if (lane === 0) {
     	Entity.call(this, game, 57, -200);
     } else if (lane === 1) {
@@ -509,6 +512,7 @@ function Branch(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 0, 2700, 800, 600, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
+    this.live = true;
     if (lane === 0) {
     	Entity.call(this, game, 65, -200);
     } else if (lane === 1) {
@@ -544,6 +548,7 @@ function Wall (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 1580, 200, 200, 200, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
+	this.live = true;
 	if (lane === 0) {
     	Entity.call(this, game, 69, -200);
     } else if (lane === 1) {
@@ -579,6 +584,7 @@ function Target_Coke (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 990, 320, 185, .03, 14, true, false);
 	this.speed = 120;
 	this.ctx = game.ctx;
+	this.live = true;
 	if (lane === left_lane) {
     	Entity.call(this, game, 80, -200);
     } else if (lane === middle_lane) {
@@ -695,6 +701,80 @@ Obstacle_Spawner.prototype.draw = function () {
 		this.obstacles[i].draw();
 	}
 };
+function Invincible (game, spritesheet, lane) {
+	this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+	this.speed = 60;
+	this.ctx = game.ctx;
+	this.live = true;
+	if (lane === 0) {
+    	Entity.call(this, game, 65, -200);
+    } else if (lane === 1) {
+    	Entity.call(this, game, 155, -200);
+    } else {
+    	Entity.call(this, game, 245, -200);
+    }
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+};
+
+Invincible.prototype = new Entity();
+Invincible.prototype.constructor = Invincible;
+
+Invincible.prototype.update = function() {
+	this.speed =  60 * background_speed;
+	this.y += this.game.clockTick * this.speed;
+	this.boundingbox.y = this.y;
+	Entity.prototype.update.call(this);
+};
+
+Invincible.prototype.draw = function () {
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.45);//0.4
+    Entity.prototype.draw.call(this);
+};
+
+function Powerup_Spawner(game, spritesheet) {
+	this.powerups = [];
+	this.game = game;
+	this.spritesheet = spritesheet;
+	this.counter = 0;
+	this.previous = -1;
+};
+
+Powerup_Spawner.prototype = new Entity();
+Powerup_Spawner.prototype.constructor = Powerup_Spawner;
+
+Powerup_Spawner.prototype.update = function () {
+	if(this.counter % Math.ceil(9755 / background_speed) === 0 && this.counter !== 0){
+		var type = Math.floor(Math.random() * 100) + 1;
+//		  type %= 1;
+		  type = 0; //Testing individual obstacles
+		  var lane = Math.floor(Math.random() * 10) + 1;
+		  lane %= 3;
+//		  lane = 0; //Test obstacle in specific lane
+		  switch(type) {
+		  case 0: //Spikes
+		  		this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
+		  		break;
+		  }
+	}
+	var numPowerup = this.powerups.length;
+	for(i = 0; i < numPowerup; i++) {
+		this.powerups[i].update();
+	}
+	this.counter++;
+};
+
+Powerup_Spawner.prototype.draw = function () {
+	var numPowerup = this.powerups.length;
+	for(i = 0; i < numPowerup; i++) {
+		this.powerups[i].draw();
+	}
+};
 
 AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/bg4.png");
@@ -703,6 +783,7 @@ AM.queueDownload("./img/bg6.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
+AM.queueDownload("./img/crystal_pepsi.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -716,7 +797,8 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Background2(gameEngine, AM.getAsset("./img/bg4.png")));
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/bg3.png")));
     gameEngine.addEntity(new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png")));
-    gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/theboy.png")));
+    gameEngine.addEntity(new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png")));
+    gameEngine.addEntity(new PepsiMan(gameEngine, AM.getAsset("./img/theboy.png")));
     gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
