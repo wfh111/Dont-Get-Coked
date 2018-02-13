@@ -752,12 +752,12 @@ Powerup_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(9755 / background_speed) === 0 && this.counter !== 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 //		  type %= 1;
-		  type = 0; //Testing individual obstacles
+		  type = 0; //Testing individual powerup
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
-//		  lane = 0; //Test obstacle in specific lane
+//		  lane = 0; //Test powerup in specific lane
 		  switch(type) {
-		  case 0: //Spikes
+		  case 0: //Invincibility
 		  		this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 		  		break;
 		  }
