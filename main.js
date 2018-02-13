@@ -10,6 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
+var bound_box = false;
 var spike_x;
 var spike_y;
 
@@ -289,13 +290,12 @@ function MushroomDude(game, spritesheet) {
     this.Right = false;
     this.Left = false;
     this.Up = false;
-    this.box = true;
     this.ctx = game.ctx;
 	this.boundingbox = new BoundingBox(this.x + 150, this.y + 100, this.animation.frameWidth  - 270, this.animation.frameHeight - 430);
 }
 
 MushroomDude.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
@@ -380,12 +380,11 @@ function OminousFigure(game, spritesheet) {
     this.speed = 1;
     this.game = game;
     this.ctx = game.ctx;
-    this.box = true;
 	this.boundingbox = new BoundingBox(this.x + 150, this.y + 150, this.animation.frameWidth + 105, this.animation.frameHeight);
 }
 
 OminousFigure.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
@@ -402,7 +401,6 @@ function Spike (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
-	this.box = true;
 	if (lane === 0) {
     	Entity.call(this, game, 80, -200);
     } else if (lane === 1) {
@@ -426,7 +424,7 @@ Spike.prototype.update = function() {
 };
 
 Spike.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //        this.ctx.strokeStyle = "red";
 //        this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
         this.ctx.strokeStyle = "yellow";
@@ -441,7 +439,6 @@ function Crate(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 0, 1905, 512, 512, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
-	this.box = true;
     if (lane === 0) {
     	Entity.call(this, game, 87, -200);
     } else if (lane === 1) {
@@ -463,7 +460,7 @@ Crate.prototype.update = function () {
 };
 
 Crate.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
@@ -477,7 +474,6 @@ function Oil(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 100, 3390, 776, 450, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
-	this.box = true;
     if (lane === 0) {
     	Entity.call(this, game, 57, -200);
     } else if (lane === 1) {
@@ -499,7 +495,7 @@ Oil.prototype.update = function () {
 };
 
 Oil.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
@@ -513,7 +509,6 @@ function Branch(game, spritesheet, lane) {
     this.animation = new Animation(spritesheet, 0, 2700, 800, 600, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
-	this.box = true;
     if (lane === 0) {
     	Entity.call(this, game, 65, -200);
     } else if (lane === 1) {
@@ -535,7 +530,7 @@ Branch.prototype.update = function () {
 };
 
 Branch.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
@@ -549,7 +544,6 @@ function Wall (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 1580, 200, 200, 200, 1, 1, true);
 	this.speed = 60;
 	this.ctx = game.ctx;
-	this.box = true;
 	if (lane === 0) {
     	Entity.call(this, game, 69, -200);
     } else if (lane === 1) {
@@ -571,7 +565,7 @@ Wall.prototype.update = function() {
 };
 
 Wall.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
@@ -585,7 +579,6 @@ function Target_Coke (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 990, 320, 185, .03, 14, true, false);
 	this.speed = 120;
 	this.ctx = game.ctx;
-	this.box = true;
 	if (lane === left_lane) {
     	Entity.call(this, game, 80, -200);
     } else if (lane === middle_lane) {
@@ -607,7 +600,7 @@ Target_Coke.prototype.update = function() {
 };
 
 Target_Coke.prototype.draw = function () {
-	if (this.box) {
+	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
