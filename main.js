@@ -1,8 +1,8 @@
 var AM = new AssetManager();
 var sheetHeight = 600;
-var right_lane = 100;
-var left_lane = -75;
-var middle_lane = 15;
+var right_lane = 250;
+var left_lane = 75;
+var middle_lane = 165;
 var current_lane;
 var lane_size = 85;
 var left_change = 0;
@@ -13,6 +13,7 @@ var background_speed = 3;
 var bound_box = true;
 var spike_x;
 var spike_y;
+var gameEngine = new GameEngine();
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -284,14 +285,14 @@ LevelDisplay.prototype.draw = function() {
 function PepsiMan(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
     this.x = middle_lane;
-    this.y = 100;
+    this.y = 150;
     this.speed = 5;
     this.game = game;
     this.Right = false;
     this.Left = false;
-    this.Up = false;
+    this.shoot = false;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x + 150, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
+	this.boundingbox = new BoundingBox(this.x, this.y, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
 PepsiMan.prototype.draw = function () {
@@ -301,8 +302,8 @@ PepsiMan.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y, 0.2);
-	this.boundingbox = new BoundingBox(this.x + 150, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+	this.boundingbox = new BoundingBox(this.x, this.y, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
 PepsiMan.prototype.update = function () {
@@ -362,20 +363,21 @@ PepsiMan.prototype.update = function () {
       }
     }
 
-    if (this.game.upButton) {
-      this.Up = true;
+    if (this.game.shootButton) {
+      this.shoot = true;
+      gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png"), this));
     } else {
-      this.Up = false;
+      this.shoot = false;
     }
-    if (this.Up) {
-      this.y -= this.game.clockTick * this.speed;
-      this.boundingbox.y -= this.game.clockTick * this.speed;
+    if (this.shoot) {
+      //this.y -= this.game.clockTick * this.speed;
+      //this.boundingbox.y -= this.game.clockTick * this.speed;
     }
 }
 
 function OminousFigure(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 201.2, 117.7, 0.07, 14, true);
-    this.x = middle_lane - 125;
+    this.x = -left_lane - 20;
     this.y = 430;
     this.speed = 1;
     this.game = game;
@@ -776,6 +778,30 @@ Powerup_Spawner.prototype.draw = function () {
 	}
 };
 
+// bullet
+function Bullet(game, spritesheet, pepsimane) {
+    this.animation = new Animation(spritesheet, 0, 0, 155.75, 156, 0.05, 16, true, true);
+    this.x = pepsimane.x;
+    this.y = pepsimane.y;
+    this.speed = 5;
+    this.game = game;
+    this.Right = false;
+    this.Left = false;
+    this.shoot = false;
+    this.ctx = game.ctx;
+}
+
+Bullet.prototype.draw = function () {
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.15);
+}
+
+Bullet.prototype.update = function () {
+    //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
+    //this.x += this.game.clockTick * this.speed;
+    //if (this.x > 400) this.x = 0;
+    this.y -= 1;
+}
+
 AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/bg4.png");
 AM.queueDownload("./img/bg5.png");
@@ -784,12 +810,13 @@ AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/crystal_pepsi.png");
+AM.queueDownload("./img/pep16v2.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
 
-    var gameEngine = new GameEngine();
+    //var gameEngine = new GameEngine();
     gameEngine.init(ctx);
     gameEngine.start();
     gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
@@ -800,6 +827,7 @@ AM.downloadAll(function () {
     gameEngine.addEntity(new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png")));
     gameEngine.addEntity(new PepsiMan(gameEngine, AM.getAsset("./img/theboy.png")));
     gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png")));
+    //gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
 

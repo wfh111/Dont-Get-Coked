@@ -49,9 +49,10 @@ GameEngine.prototype.startInput = function () {
           that.leftButton = true;
         }
         if (e.keyCode == 38 || e.keyCode == 87) {
-          console.log("up");
-          that.upButton = true;
+          console.log("up/shoot");
+          that.shootButton = true;
         }
+
         //        console.log(e);
 
         e.preventDefault();
@@ -70,7 +71,7 @@ GameEngine.prototype.startInput = function () {
         }
         if (e.keyCode == 38 || e.keyCode == 87) {
           console.log("up");
-          that.upButton = false;
+          that.shootButton = false;
         }
         console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -175,7 +176,7 @@ GameEngine.prototype.loop = function () {
     this.draw();
     this.rightButton = null;
     this.leftButton = null;
-    this.upButton = null;
+    this.shootButton = null;
 }
 
 function Timer() {
