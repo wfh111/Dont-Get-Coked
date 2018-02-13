@@ -52,6 +52,10 @@ GameEngine.prototype.startInput = function () {
           console.log("up/shoot");
           that.shootButton = true;
         }
+        if (e.keyCode == 32) {
+          console.log("space/jump");
+          that.jumpButton = true;
+        }
 
         //        console.log(e);
 
@@ -72,6 +76,10 @@ GameEngine.prototype.startInput = function () {
         if (e.keyCode == 38 || e.keyCode == 87) {
           console.log("up");
           that.shootButton = false;
+        }
+        if (e.keyCode == 32) {
+          console.log("space/jump");
+          that.jumpButton = false;
         }
         console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -177,6 +185,7 @@ GameEngine.prototype.loop = function () {
     this.rightButton = null;
     this.leftButton = null;
     this.shootButton = null;
+    this.jumpButton = null;
 }
 
 function Timer() {

@@ -284,13 +284,18 @@ LevelDisplay.prototype.draw = function() {
 //original animation spritesheet, 189, 230, 5, 0.10, 14, true,1
 function PepsiMan(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
+    this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 801, 894, 0.05, 5, false, true);
+    this.shootAnimation = new Animation(AM.getAsset("./img/shoot.png"), 0, 0, 589, 594, 0.05, 5, false, true);
+    //this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 799, 894, 0.05, 5, false, true);
+    this.jumping = false;
     this.x = middle_lane;
     this.y = 150;
     this.speed = 5;
     this.game = game;
     this.Right = false;
     this.Left = false;
-    this.shoot = false;
+    this.shooting = false;
+    this.fired = false;
     this.ctx = game.ctx;
 	this.boundingbox = new BoundingBox(this.x, this.y, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
@@ -302,7 +307,14 @@ PepsiMan.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+  if (this.jumping) {
+      this.jumpAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.12);
+  } else if (this.shooting) {
+      this.shootAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.18);
+  } else {
+      this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+  }
+	//this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
 	this.boundingbox = new BoundingBox(this.x, this.y, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
@@ -310,6 +322,36 @@ PepsiMan.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
+    if (this.game.jumpButton) this.jumping = true;
+    if (this.jumping) {
+        if (this.jumpAnimation.isDone()) {
+            this.jumpAnimation.elapsedTime = 0;
+            this.jumping = false;
+        }
+        var jumpDistance = this.jumpAnimation.elapsedTime / this.jumpAnimation.totalTime;
+
+        if (jumpDistance > 0.46) {
+          this.y += 4;
+        } else {
+          this.y -= 4;
+        }
+    }
+
+    if (this.game.shootButton) {
+      this.shooting = true;
+      if (!this.fired) {
+        gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png"), this));
+        this.fired = true;
+      }
+    }
+    if (this.shooting) {
+        if (this.shootAnimation.isDone()) {
+            this.shootAnimation.elapsedTime = 0;
+            this.shooting = false;
+            this.fired = false;
+        }
+    }
+
     if (this.x <= left_lane + (lane_size / 2)) {
       current_lane = left_lane;
     } else if (this.x > (left_lane + (lane_size / 2)) && this.x <= (right_lane - (lane_size / 2))) {
@@ -361,17 +403,6 @@ PepsiMan.prototype.update = function () {
         left_change = 0;
         this.Left = false;
       }
-    }
-
-    if (this.game.shootButton) {
-      this.shoot = true;
-      gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png"), this));
-    } else {
-      this.shoot = false;
-    }
-    if (this.shoot) {
-      //this.y -= this.game.clockTick * this.speed;
-      //this.boundingbox.y -= this.game.clockTick * this.speed;
     }
 }
 
@@ -781,13 +812,13 @@ Powerup_Spawner.prototype.draw = function () {
 // bullet
 function Bullet(game, spritesheet, pepsimane) {
     this.animation = new Animation(spritesheet, 0, 0, 155.75, 156, 0.05, 16, true, true);
-    this.x = pepsimane.x;
-    this.y = pepsimane.y;
-    this.speed = 5;
+    this.x = pepsimane.x + 20;
+    this.y = pepsimane.y - 5;
+    this.speed = 2;
     this.game = game;
     this.Right = false;
     this.Left = false;
-    this.shoot = false;
+    this.shooting = false;
     this.ctx = game.ctx;
 }
 
@@ -799,7 +830,7 @@ Bullet.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
-    this.y -= 1;
+    this.y -= this.speed;
 }
 
 AM.queueDownload("./img/bg3.png");
@@ -808,6 +839,8 @@ AM.queueDownload("./img/bg5.png");
 AM.queueDownload("./img/bg6.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
+AM.queueDownload("./img/jump.png");
+AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/crystal_pepsi.png");
 AM.queueDownload("./img/pep16v2.png");
