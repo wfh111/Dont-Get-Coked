@@ -814,7 +814,7 @@ function Bullet(game, spritesheet, pepsimane) {
     this.animation = new Animation(spritesheet, 0, 0, 155.75, 156, 0.05, 16, true, true);
     this.x = pepsimane.x + 20;
     this.y = pepsimane.y - 5;
-    this.speed = 2;
+    this.speed = 4;
     this.game = game;
     this.Right = false;
     this.Left = false;
