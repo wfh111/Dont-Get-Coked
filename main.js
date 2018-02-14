@@ -10,10 +10,11 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = true;
+var bound_box = false;
 var spike_x;
 var spike_y;
 var gameEngine = new GameEngine();
+var chaser;
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
@@ -296,8 +297,12 @@ function PepsiMan(game, spritesheet) {
     this.Left = false;
     this.shooting = false;
     this.fired = false;
+    this.stuck = false;
+    this.invincible = false;
+    this.currentTime = this.game.clockTick;
+    this.prevTime = this.game.clockTick;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
+	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 290, this.animation.frameHeight - 530);
 }
 
 PepsiMan.prototype.draw = function () {
@@ -315,7 +320,6 @@ PepsiMan.prototype.draw = function () {
       this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
   }
 	//this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
-	this.boundingbox = new BoundingBox(this.x, this.y + 50, this.animation.frameWidth  - 270, this.animation.frameHeight - 530);
 }
 
 PepsiMan.prototype.update = function () {
@@ -325,12 +329,19 @@ PepsiMan.prototype.update = function () {
     if (this.y >= 150) { // makeshift stay alive scale
       this.y -= 0.1;
     }	
-    
+    this.currentTime += this.game.clockTick;
+    if (this.invincible) {
+//    	console.log(this.currentTime - this.prevTime); //Bug Check
+    	if (this.currentTime - this.prevTime >= 10) {
+    		this.invincible = false;
+    	}
+    }
     if (this.game.jumpButton) this.jumping = true;
     if (this.jumping) {
         if (this.jumpAnimation.isDone()) {
             this.jumpAnimation.elapsedTime = 0;
             this.jumping = false;
+            this.stuck = false;
         }
         var jumpDistance = this.jumpAnimation.elapsedTime / this.jumpAnimation.totalTime;
 
@@ -363,14 +374,6 @@ PepsiMan.prototype.update = function () {
     } else {
       current_lane = right_lane;
     }
-
-    var rect1 ={x:this.x, y:this.y, width:67.6, height:108};
-    var rect2 ={x:spike_x, y:spike_y, width:56.8, height:65.2};
-    if (rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x &&
-      rect1.y < rect2.y + rect2.height && rect1.height + rect1.y > rect2.y) { // collision detected!
-          console.log("Collision detected with spike@@@@ \n REEEEEEEEEEEEEEEEEeeeee");
-          this.y += this.game.clockTick * 60;
-    }
     if (this.game.rightButton) {
       this.Right = true;
     } else {
@@ -379,7 +382,7 @@ PepsiMan.prototype.update = function () {
         this.Right = false;
       }
     }
-    if (this.Right) {
+    if (this.Right && !this.stuck) {
       if (this.x < right_lane) {
         this.x += this.speed;
         this.boundingbox.x += this.speed;
@@ -398,7 +401,7 @@ PepsiMan.prototype.update = function () {
         this.Left = false;
       }
     }
-    if (this.Left) {
+    if (this.Left && !this.stuck) {
       if (this.x > left_lane) {
         this.x -= this.speed;
         this.boundingbox.x -= this.speed;
@@ -408,6 +411,40 @@ PepsiMan.prototype.update = function () {
         this.Left = false;
       }
     }
+    for (var i = 0; i < this.game.powerups.length; i++) {
+    	var pwr = this.game.powerups[i];
+    	if(pwr instanceof Invincible && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
+    		pwr.live = false;
+    		this.invincible = true;
+    		this.prevTime = this.currentTime;
+    	}
+    }
+    for (var i = 0; i < this.game.obstacles.length; i++) {
+    	var ob = this.game.obstacles[i];
+    	if(ob instanceof Spike && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.jumping) {
+    		this.y += this.game.clockTick * ob.speed;
+    		this.stuck = true;
+    	}
+    	if(ob instanceof Oil && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
+    		this.y += this.game.clockTick * 60;
+    		ob.live = false;
+    	}
+    	else if(ob instanceof Branch && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
+    		this.y += this.game.clockTick * 100;
+    		ob.live = false;
+    	}
+    	else if(ob instanceof Target_Coke && this.boundingbox.collide(ob.boundingbox) && !this.jumping && ob.live && !this.invincible) {
+    		this.y += this.game.clockTick * 2000;
+    		ob.live = false;
+    	}
+    	else if((ob instanceof Wall || ob instanceof Crate) && this.boundingbox.collide(ob.boundingbox) && !this.invincible && ob.live) {
+    		this.y += this.game.clockTick * ob.speed;
+    	}
+    }
+	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
+	if (this.boundingbox.collide(chaser.boundingbox)) {
+		console.log("Game Over");
+	}
 }
 
 function OminousFigure(game, spritesheet) {
@@ -446,7 +483,7 @@ function Spike (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 255, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 5, this.y, this.animation.frameWidth - 85, this.animation.frameHeight - 100);
+	this.boundingbox = new BoundingBox(this.x + 5, this.y + 10, this.animation.frameWidth - 85, this.animation.frameHeight - 110);
 };
 
 Spike.prototype = new Entity();
@@ -455,9 +492,9 @@ Spike.prototype.constructor = Spike;
 Spike.prototype.update = function() {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-  spike_x = this.x;
-  spike_y = this.y;
-  this.boundingbox.y = this.y;
+	spike_x = this.x;
+	spike_y = this.y;
+	this.boundingbox = new BoundingBox(this.x + 5, this.y + 10, this.animation.frameWidth - 85, this.animation.frameHeight - 110);
 	Entity.prototype.update.call(this);
 };
 
@@ -468,10 +505,8 @@ Spike.prototype.draw = function () {
         this.ctx.strokeStyle = "yellow";
         this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
-	if(this.live) {
-		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
-	    Entity.prototype.draw.call(this);
-	}
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
+    Entity.prototype.draw.call(this);
 };
 //0,0
 // inheritance
@@ -496,7 +531,7 @@ Crate.prototype.constructor = Crate;
 Crate.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox.y = this.y;
+	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 460, this.animation.frameHeight - 460);
 	Entity.prototype.update.call(this);
 };
 
@@ -534,7 +569,7 @@ Oil.prototype.constructor = Oil;
 Oil.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox.y = this.y;
+	this.boundingbox = new BoundingBox(this.x + 30, this.y, this.animation.frameWidth - 724, this.animation.frameHeight - 380);
 	Entity.prototype.update.call(this);
 };
 
@@ -545,10 +580,8 @@ Oil.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	if(this.live) {
-		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
-	    Entity.prototype.draw.call(this);
-	}
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+    Entity.prototype.draw.call(this);
 };
 //0, 675
 function Branch(game, spritesheet, lane) {
@@ -572,7 +605,7 @@ Branch.prototype.constructor = Branch;
 Branch.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox.y = this.y;
+	this.boundingbox = new BoundingBox(this.x + 15, this.y , this.animation.frameWidth - 735, this.animation.frameHeight - 545);
 	Entity.prototype.update.call(this);
 };
 
@@ -583,10 +616,8 @@ Branch.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	if(this.live) {
-		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1); //0.1
-		Entity.prototype.draw.call(this);
-	}
+	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1); //0.1
+	Entity.prototype.draw.call(this);
 };
 
 function Wall (game, spritesheet, lane) {
@@ -610,7 +641,7 @@ Wall.prototype.constructor = Wall;
 Wall.prototype.update = function() {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox.y = this.y;
+	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 145);
 	Entity.prototype.update.call(this);
 };
 
@@ -647,7 +678,7 @@ Target_Coke.prototype.constructor = Target_Coke;
 Target_Coke.prototype.update = function() {
 	this.speed =  115 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox.y = this.y;
+	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 255, this.animation.frameHeight - 148);
 	Entity.prototype.update.call(this);
 };
 
@@ -703,7 +734,7 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
-//		  type = 4; //Testing individual obstacles
+//		  type = 0; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
@@ -771,7 +802,7 @@ Invincible.prototype.constructor = Invincible;
 Invincible.prototype.update = function() {
 	this.speed =  60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox.y = this.y;
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
 	Entity.prototype.update.call(this);
 };
 
@@ -782,8 +813,10 @@ Invincible.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.45);//0.4
-    Entity.prototype.draw.call(this);
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.45);
+	    Entity.prototype.draw.call(this);
+	}
 };
 
 function Powerup_Spawner(game, spritesheet) {
@@ -798,7 +831,7 @@ Powerup_Spawner.prototype = new Entity();
 Powerup_Spawner.prototype.constructor = Powerup_Spawner;
 
 Powerup_Spawner.prototype.update = function () {
-	if(this.counter % Math.ceil(9755 / background_speed) === 0 && this.counter !== 0){
+	if(this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 //		  type %= 1;
 		  type = 0; //Testing individual powerup
@@ -835,11 +868,19 @@ function Bullet(game, spritesheet, pepsimane) {
     this.Right = false;
     this.Left = false;
     this.shooting = false;
+    this.live = true;
     this.ctx = game.ctx;
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 130);
 }
 
 Bullet.prototype.draw = function () {
+	if (bound_box) {
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+	}
+	if(this.live){
 	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.15);
+	}
 }
 
 Bullet.prototype.update = function () {
@@ -847,6 +888,14 @@ Bullet.prototype.update = function () {
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
     this.y -= this.speed;
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 130);
+	for (var i = 0; i < this.game.obstacles.length; i++) {
+		var ob = this.game.obstacles[i];
+		if(ob instanceof Wall && this.boundingbox.collide(ob.boundingbox) && this.live && ob.live) {
+			this.live = false;
+			ob.live = false;
+		}
+	}
 }
 
 AM.queueDownload("./img/bg3.png");
@@ -864,18 +913,22 @@ AM.queueDownload("./img/pep16v2.png");
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
-
-    //var gameEngine = new GameEngine();
+//    var gameEngine = new GameEngine();
     gameEngine.init(ctx);
     gameEngine.start();
+    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png"));
+    var obstacleSpawner = new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png"));
+    chaser = new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png"));
     gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
     gameEngine.addEntity(new Background3(gameEngine, AM.getAsset("./img/bg5.png")));
     gameEngine.addEntity(new Background2(gameEngine, AM.getAsset("./img/bg4.png")));
     gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/bg3.png")));
-    gameEngine.addEntity(new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png")));
-    gameEngine.addEntity(new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png")));
+    gameEngine.addEntity(obstacleSpawner);
+    gameEngine.obstacles = obstacleSpawner.obstacles;
+    gameEngine.addEntity(powerups);
+    gameEngine.powerups = powerups.powerups;
     gameEngine.addEntity(new PepsiMan(gameEngine, AM.getAsset("./img/theboy.png")));
-    gameEngine.addEntity(new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png")));
+    gameEngine.addEntity(chaser);
     //gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
