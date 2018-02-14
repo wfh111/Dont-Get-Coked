@@ -468,8 +468,10 @@ Spike.prototype.draw = function () {
         this.ctx.strokeStyle = "yellow";
         this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
-    Entity.prototype.draw.call(this);
+	if(this.live) {
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
+	    Entity.prototype.draw.call(this);
+	}
 };
 //0,0
 // inheritance
@@ -505,8 +507,10 @@ Crate.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
-    Entity.prototype.draw.call(this);
+	if(this.live) {
+	    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
+	    Entity.prototype.draw.call(this);	
+	}
 };
 //0, 1300
 function Oil(game, spritesheet, lane) {
@@ -541,8 +545,10 @@ Oil.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//.2
-    Entity.prototype.draw.call(this);
+	if(this.live) {
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+	    Entity.prototype.draw.call(this);
+	}
 };
 //0, 675
 function Branch(game, spritesheet, lane) {
@@ -577,8 +583,10 @@ Branch.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1); //0.1
-    Entity.prototype.draw.call(this);
+	if(this.live) {
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1); //0.1
+		Entity.prototype.draw.call(this);
+	}
 };
 
 function Wall (game, spritesheet, lane) {
@@ -612,9 +620,10 @@ Wall.prototype.draw = function () {
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  } if (this.live) {
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
+	    Entity.prototype.draw.call(this);
   }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
-    Entity.prototype.draw.call(this);
 };
 
 function Target_Coke (game, spritesheet, lane) {
@@ -649,8 +658,11 @@ Target_Coke.prototype.draw = function () {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
-    Entity.prototype.draw.call(this);
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
+	    Entity.prototype.draw.call(this);
+	}
+
 };
 
 //function Side_Coke (game, spritesheet, lane) {
@@ -691,7 +703,7 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
-//		  type = 3; //Testing individual obstacles
+//		  type = 4; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
