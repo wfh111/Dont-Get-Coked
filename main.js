@@ -268,9 +268,6 @@ function startScreen(game, img, x, y) {
 	this.img = img;
 	this.x = x;
 	this.y = y;
-//	this.ctx.font = "15px Arial";
-//	this.ctx.fillStyle = "black";
-//	this.ctx.fillText("Click For Pepsi!");
 	Entity.call(this, game, x, y);
 }
 
