@@ -313,7 +313,7 @@ PepsiMan.prototype.draw = function () {
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
   if (this.jumping) {
-      this.jumpAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 15, this.y - 10, 0.12);
+      this.jumpAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 15, this.y - 10, 0.14);
   } else if (this.shooting) {
       this.shootAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
   } else {
