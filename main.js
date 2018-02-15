@@ -10,7 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = true;
+var bound_box = false;
 var gameEngine = new GameEngine();
 var chaser;
 
@@ -423,7 +423,9 @@ PepsiMan.prototype.update = function () {
             this.jumpAnimation.elapsedTime = 0;
             this.jumping = false;
             this.stuck = false;
-            this.spike.live = false;
+            if (this.spike !== undefined) {
+                this.spike.live = false;
+            }
         }
         var jumpDistance = this.jumpAnimation.elapsedTime / this.jumpAnimation.totalTime;
         if (jumpDistance > 0.46) {
