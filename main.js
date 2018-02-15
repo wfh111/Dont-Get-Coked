@@ -289,8 +289,21 @@ startScreen.prototype.draw = function(ctx) {
 		ctx.font = "20pt Arial";
 		ctx.fillStyle = "white";
 		if (this.game.mouse) {
-			ctx.fillStyle = "black";
-			ctx.fillText("Click For Pepsi!", 150, 300);
+			ctx.fillStyle = "white";
+			ctx.fillText("Click For Pepsi!", 112, 550);
+			ctx.font = "10pt Arial";
+			ctx.fillText("Controls and Hints", 140, 20)
+			ctx.fillText("Move: A and D or <- and ->" , 10, 40);
+			ctx.fillText("Jump: Space Bar", 10, 55);
+			ctx.fillText("Shoot: W", 10, 70);
+			ctx.fillText("Collect Crystal Pepsi", 210, 40);
+			ctx.fillText("for Invincibility!", 210, 55);
+			ctx.fillText("Collect Party Food", 210, 85);
+			ctx.fillText("to Regain Energy!", 210, 100);
+			ctx.fillText("Shoot Coke Boxes!", 210, 470);
+			ctx.fillText("Dodge Crates!", 210, 485);
+			ctx.fillText("Jump Out of Spikes!", 210, 500);
+			ctx.fillText("Do it For Pepsi!", 100, 485);
 		}
 		
 	}
@@ -319,8 +332,10 @@ gameOver.prototype.draw = function(ctx) {
 		ctx.drawImage(this.img, this.x, this.y);
 		ctx.font = "15pt Arial";
 		ctx.fillStyle = "black";
-		ctx.fillText("YOU GOT COKED!", 150, 300);
-		ctx.fillText("Your Score: " + gameScore, 150, 350); //Need to add score variable, need to pass in score parameter?
+		ctx.fillText("YOU GOT COKED!", 112, 100);
+		ctx.fillText("Your Score: " + gameScore, 112, 150); //Need to add score variable, need to pass in score parameter?
+		ctx.font = "20pt Arial";
+		ctx.fillText("COKE HAS TAKEN OVER!", 40, 550);
 	}
 		
 }
@@ -500,6 +515,8 @@ PepsiMan.prototype.update = function () {
     		pwr.live = false;
     		this.invincible = true;
     		this.prevTime = this.currentTime;
+    		this.score += 1000;
+    		gameScore += 1000;
     	}
     }
     for (var i = 0; i < this.game.obstacles.length; i++) {
@@ -1186,7 +1203,8 @@ AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/crystal_pepsi.png");
 AM.queueDownload("./img/pep16v2.png");
-AM.queueDownload("./img/pepsilogo.jpg");
+AM.queueDownload("./img/newpepsi.jpg");
+AM.queueDownload("./img/newcoke.jpg");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1197,11 +1215,11 @@ AM.downloadAll(function () {
     gameEngine.running = false;
     gameEngine.over = false;
     gameEngine.noSG = false;
-    var SG = new startScreen(gameEngine, AM.getAsset("./img/pepsilogo.jpg"), 0, 0);
+    var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
     
-    var GO = new gameOver(gameEngine, AM.getAsset("./img/pepsilogo.jpg"), 0, 0);
+    var GO = new gameOver(gameEngine, AM.getAsset("./img/newcoke.jpg"), 0, 0);
     gameEngine.addEntity(GO);
     console.log(GO);
     
