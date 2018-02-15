@@ -375,6 +375,7 @@ function PepsiMan(game, spritesheet) {
     this.fired = false;
     this.stuck = false;
     this.invincible = false;
+    this.spike;
     this.currentTime = this.game.clockTick;
     this.prevTime = this.game.clockTick;
     this.ctx = game.ctx;
@@ -422,12 +423,13 @@ PepsiMan.prototype.update = function () {
             this.jumpAnimation.elapsedTime = 0;
             this.jumping = false;
             this.stuck = false;
+            this.spike.live = false;
         }
         var jumpDistance = this.jumpAnimation.elapsedTime / this.jumpAnimation.totalTime;
         if (jumpDistance > 0.46) {
-          this.y += 4;
+          this.y += 3;
         } else {
-          this.y -= 4;
+          this.y -= 3;
         }
     }
 
@@ -500,9 +502,10 @@ PepsiMan.prototype.update = function () {
     }
     for (var i = 0; i < this.game.obstacles.length; i++) {
     	var ob = this.game.obstacles[i];
-    	if(ob instanceof Spike && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.jumping) {
+    	if(ob instanceof Spike && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.jumping && ob.live) {
     		this.y += this.game.clockTick * ob.speed;
     		this.stuck = true;
+    		this.spike = ob;
     	}
     	if(ob instanceof Oil && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
     		this.y += this.game.clockTick * 60;
@@ -520,11 +523,12 @@ PepsiMan.prototype.update = function () {
     		this.y += this.game.clockTick * ob.speed;
     	}
     }
-    if(this.jumping) {
-    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 70, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
-    } else {
+//    if(this.jumping) {
+//    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
+//    } 
+//    else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
-    }
+//    }
 	if (this.boundingbox.collide(chaser.boundingbox)) {
 		console.log("Game Over");
 		this.game.finalScore = this.score;
@@ -835,8 +839,8 @@ Obstacle_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
-//		  type %= 5;
-		  type = 1; //Testing individual obstacles
+		  type %= 5;
+//		  type = 1; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
@@ -977,7 +981,7 @@ function Bullet(game, spritesheet, pepsimane) {
     this.shooting = false;
     this.live = true;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 125);
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 100);
 }
 
 Bullet.prototype.draw = function () {
@@ -997,7 +1001,7 @@ Bullet.prototype.update = function () {
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
     this.y -= this.speed;
-	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 125);
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 100);
 	for (var i = 0; i < this.game.obstacles.length; i++) {
 		var ob = this.game.obstacles[i];
 		if(ob instanceof Wall && this.boundingbox.collide(ob.boundingbox) && this.live && ob.live) {
