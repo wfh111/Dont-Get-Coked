@@ -81,6 +81,7 @@ function Background(game, spritesheet) {
 };
 
 Background.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
     //this.ctx.drawImage(this.spritesheet,
       //             this.x, this.y);
       // Pan background
@@ -100,6 +101,7 @@ Background.prototype.draw = function () {
 };
 
 Background.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
   if (this.speed <= 7) {
     this.speed *= 1.0001;
     background_speed = this.speed;
@@ -117,6 +119,7 @@ function Background2(game, spritesheet) {
 };
 
 Background2.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
     //this.ctx.drawImage(this.spritesheet,
       //             this.x, this.y);
       // Pan background
@@ -136,6 +139,7 @@ Background2.prototype.draw = function () {
 };
 
 Background2.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
   if (this.speed <= 7) {
     this.speed *= 1.0001;
     background_speed = this.speed;
@@ -153,6 +157,7 @@ function Background3(game, spritesheet) {
 };
 
 Background3.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
     //this.ctx.drawImage(this.spritesheet,
       //             this.x, this.y);
       // Pan background
@@ -172,6 +177,7 @@ Background3.prototype.draw = function () {
 };
 
 Background3.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
   if (this.speed <= 7) {
     this.speed *= 1.0001;
     background_speed = this.speed;
@@ -180,6 +186,7 @@ Background3.prototype.update = function () {
 
 // no inheritance
 function Background4(game, spritesheet) {
+	
     this.x = 0;
     this.y = 0;
     this.speed = 3;
@@ -189,6 +196,7 @@ function Background4(game, spritesheet) {
 };
 
 Background4.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
     //this.ctx.drawImage(this.spritesheet,
       //             this.x, this.y);
       // Pan background
@@ -206,6 +214,7 @@ Background4.prototype.draw = function () {
 };
 
 Background4.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
   if (this.speed <= 7) {
     this.speed *= 1.0001;
     background_speed = this.speed;
@@ -244,13 +253,82 @@ function Score(game, score, color, x, y) {
 //Score.prototype = new Entity();
 Score.prototype.constructor = Score;
 Score.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.score += Math.floor(background_speed);
+	gameScore += Math.floor(background_speed);
 	this.ctx.fillText("SCORE: " + this.score, this.x, this.y);
 	//Entity.prototype.update.call(this);
 };
 Score.prototype.draw = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.ctx.fillText("SCORE: " + this.score, this.x, this.y);
 };
+
+function startScreen(game, img, x, y) {
+	this.img = img;
+	this.x = x;
+	this.y = y;
+//	this.ctx.font = "15px Arial";
+//	this.ctx.fillStyle = "black";
+//	this.ctx.fillText("Click For Pepsi!");
+	Entity.call(this, game, x, y);
+}
+
+startScreen.prototype = new Entity();
+startScreen.prototype.constructor = startScreen;
+
+startScreen.prototype.reset = function() {
+	this.game.running = false;
+}
+
+startScreen.prototype.update = function() {
+	if (this.game.click) {
+		this.game.running = true;
+	}
+}
+
+startScreen.prototype.draw = function(ctx) {
+	if(this.game.running && this.game.over || this.game.noSG) return;
+	if (!this.game.running) {
+		ctx.drawImage(this.img, this.x, this.y);
+		ctx.font = "20pt Arial";
+		ctx.fillStyle = "white";
+		if (this.game.mouse) {
+			ctx.fillStyle = "black";
+			ctx.fillText("Click For Pepsi!", 150, 300);
+		}
+		
+	}
+}
+
+function gameOver(game, img, x, y) {
+	this.img = img;
+	this.x = x;
+	this.y = y;
+	Entity.call(this, game, x, y);
+}
+
+gameOver.prototype = new Entity();
+gameOver.prototype.constructor = gameOver;
+
+gameOver.prototype.update = function() {
+	if(!this.game.running && !this.game.noSG) return;
+	if (this.game.running && this.game.over) {
+		this.game.running = false;
+	}
+}
+
+gameOver.prototype.draw = function(ctx) {
+	if(!this.game.running && !this.game.noSG) return;
+	if(!this.game.running && this.game.over) { //need variable for when pepsi man is caught
+		ctx.drawImage(this.img, this.x, this.y);
+		ctx.font = "15pt Arial";
+		ctx.fillStyle = "black";
+		ctx.fillText("YOU GOT COKED!", 150, 300);
+		ctx.fillText("Your Score: " + gameScore, 150, 350); //Need to add score variable, need to pass in score parameter?
+	}
+		
+}
 
 function LevelDisplay(game, color, x, y) {
 	this.color = color;
@@ -266,6 +344,7 @@ function LevelDisplay(game, color, x, y) {
 //Score.prototype = new Entity();
 LevelDisplay.prototype.constructor = LevelDisplay;
 LevelDisplay.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	//this.score += Math.floor(background_speed);
   current_level = Math.floor(background_speed) - 2;
   if ((background_speed - Math.floor(background_speed) > 0.1) || background_speed >= 7) {
@@ -279,6 +358,7 @@ LevelDisplay.prototype.update = function() {
 	//Entity.prototype.update.call(this);
 };
 LevelDisplay.prototype.draw = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
 };
 
@@ -306,6 +386,7 @@ function PepsiMan(game, spritesheet) {
 }
 
 PepsiMan.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -323,6 +404,7 @@ PepsiMan.prototype.draw = function () {
 }
 
 PepsiMan.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
@@ -444,6 +526,10 @@ PepsiMan.prototype.update = function () {
 	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
 	if (this.boundingbox.collide(chaser.boundingbox)) {
 		console.log("Game Over");
+		this.game.finalScore = this.score;
+		this.game.over = true;
+		this.game.running = false;
+		this.game.noSG = true;
 	}
 }
 
@@ -458,6 +544,7 @@ function OminousFigure(game, spritesheet) {
 }
 
 OminousFigure.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -468,6 +555,7 @@ OminousFigure.prototype.draw = function () {
 }
 
 OminousFigure.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 }
 
 //0,512
@@ -490,6 +578,7 @@ Spike.prototype = new Entity();
 Spike.prototype.constructor = Spike;
 
 Spike.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	spike_x = this.x;
@@ -499,6 +588,7 @@ Spike.prototype.update = function() {
 };
 
 Spike.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //        this.ctx.strokeStyle = "red";
 //        this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -529,6 +619,7 @@ Crate.prototype = new Entity();
 Crate.prototype.constructor = Crate;
 
 Crate.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 460, this.animation.frameHeight - 460);
@@ -536,6 +627,7 @@ Crate.prototype.update = function () {
 };
 
 Crate.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -567,6 +659,7 @@ Oil.prototype = new Entity();
 Oil.prototype.constructor = Oil;
 
 Oil.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	this.boundingbox = new BoundingBox(this.x + 30, this.y, this.animation.frameWidth - 724, this.animation.frameHeight - 380);
@@ -574,6 +667,7 @@ Oil.prototype.update = function () {
 };
 
 Oil.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -603,6 +697,7 @@ Branch.prototype = new Entity();
 Branch.prototype.constructor = Branch;
 
 Branch.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	this.boundingbox = new BoundingBox(this.x + 15, this.y , this.animation.frameWidth - 735, this.animation.frameHeight - 545);
@@ -610,6 +705,7 @@ Branch.prototype.update = function () {
 };
 
 Branch.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -639,6 +735,7 @@ Wall.prototype = new Entity();
 Wall.prototype.constructor = Wall;
 
 Wall.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 145);
@@ -646,6 +743,7 @@ Wall.prototype.update = function() {
 };
 
 Wall.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -676,6 +774,7 @@ Target_Coke.prototype = new Entity();
 Target_Coke.prototype.constructor = Target_Coke;
 
 Target_Coke.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed =  115 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 255, this.animation.frameHeight - 148);
@@ -683,6 +782,7 @@ Target_Coke.prototype.update = function() {
 };
 
 Target_Coke.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -731,6 +831,7 @@ Obstacle_Spawner.prototype = new Entity();
 Obstacle_Spawner.prototype.constructor = Obstacle_Spawner;
 
 Obstacle_Spawner.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 		  type %= 5;
@@ -776,6 +877,7 @@ Obstacle_Spawner.prototype.update = function () {
 };
 
 Obstacle_Spawner.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	var numObstacle = this.obstacles.length;
 	for(i = 0; i < numObstacle; i++) {
 		this.obstacles[i].draw();
@@ -800,6 +902,7 @@ Invincible.prototype = new Entity();
 Invincible.prototype.constructor = Invincible;
 
 Invincible.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed =  60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
 	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
@@ -807,6 +910,7 @@ Invincible.prototype.update = function() {
 };
 
 Invincible.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
 //      this.ctx.strokeStyle = "red";
 //      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
@@ -831,6 +935,7 @@ Powerup_Spawner.prototype = new Entity();
 Powerup_Spawner.prototype.constructor = Powerup_Spawner;
 
 Powerup_Spawner.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if(this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 //		  type %= 1;
@@ -852,6 +957,7 @@ Powerup_Spawner.prototype.update = function () {
 };
 
 Powerup_Spawner.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	var numPowerup = this.powerups.length;
 	for(i = 0; i < numPowerup; i++) {
 		this.powerups[i].draw();
@@ -874,6 +980,7 @@ function Bullet(game, spritesheet, pepsimane) {
 }
 
 Bullet.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (bound_box) {
       this.ctx.strokeStyle = "yellow";
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
@@ -884,6 +991,7 @@ Bullet.prototype.draw = function () {
 }
 
 Bullet.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
@@ -909,11 +1017,25 @@ AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/crystal_pepsi.png");
 AM.queueDownload("./img/pep16v2.png");
+AM.queueDownload("./img/pepsilogo.jpg");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
 //    var gameEngine = new GameEngine();
+    
+
+    gameEngine.running = false;
+    gameEngine.over = false;
+    gameEngine.noSG = false;
+    var SG = new startScreen(gameEngine, AM.getAsset("./img/pepsilogo.jpg"), 0, 0);
+    gameEngine.addEntity(SG);
+    console.log(SG);
+    
+    var GO = new gameOver(gameEngine, AM.getAsset("./img/pepsilogo.jpg"), 0, 0);
+    gameEngine.addEntity(GO);
+    console.log(GO);
+    
     gameEngine.init(ctx);
     gameEngine.start();
     var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png"));
@@ -932,6 +1054,6 @@ AM.downloadAll(function () {
     //gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
-
+    
     console.log("All Done!");
 });
