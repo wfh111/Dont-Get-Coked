@@ -404,7 +404,7 @@ PepsiMan.prototype.update = function () {
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
-    if (this.y >= 150) { // makeshift stay alive scale
+    if (this.y >= 150 && !this.stuck) { // makeshift stay alive scale
       this.y -= 0.1;
     }	
     this.currentTime += this.game.clockTick;
