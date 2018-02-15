@@ -10,7 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = false;
+var bound_box = true;
 var spike_x;
 var spike_y;
 var gameEngine = new GameEngine();
@@ -522,7 +522,7 @@ function Crate(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 260, -200);
     }
-	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 460, this.animation.frameHeight - 460);
+	this.boundingbox = new BoundingBox(this.x, this.y + 45, this.animation.frameWidth - 460, this.animation.frameHeight - 505);
 };
 
 Crate.prototype = new Entity();
@@ -531,7 +531,7 @@ Crate.prototype.constructor = Crate;
 Crate.prototype.update = function () {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox = new BoundingBox(this.x, this.y , this.animation.frameWidth - 460, this.animation.frameHeight - 460);
+	this.boundingbox = new BoundingBox(this.x, this.y + 45, this.animation.frameWidth - 460, this.animation.frameHeight - 505);
 	Entity.prototype.update.call(this);
 };
 
@@ -632,7 +632,7 @@ function Wall (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 245, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 145);
+	this.boundingbox = new BoundingBox(this.x + 7, this.y + 25, this.animation.frameWidth - 127, this.animation.frameHeight - 165);
 };
 
 Wall.prototype = new Entity();
@@ -641,7 +641,7 @@ Wall.prototype.constructor = Wall;
 Wall.prototype.update = function() {
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox = new BoundingBox(this.x + 7, this.y, this.animation.frameWidth - 127, this.animation.frameHeight - 145);
+	this.boundingbox = new BoundingBox(this.x + 7, this.y + 25, this.animation.frameWidth - 127, this.animation.frameHeight - 165);
 	Entity.prototype.update.call(this);
 };
 
@@ -733,8 +733,8 @@ Obstacle_Spawner.prototype.constructor = Obstacle_Spawner;
 Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
-		  type %= 5;
-//		  type = 0; //Testing individual obstacles
+//		  type %= 5;
+		  type = 1  ; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
