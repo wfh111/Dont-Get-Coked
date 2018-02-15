@@ -10,9 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = true;
-var spike_x;
-var spike_y;
+var bound_box = false;
 var gameEngine = new GameEngine();
 var chaser;
 
@@ -368,6 +366,7 @@ function PepsiMan(game, spritesheet) {
     this.jumping = false;
     this.x = middle_lane;
     this.y = 150;
+    this.groundY;
     this.speed = 5;
     this.game = game;
     this.Right = false;
@@ -415,7 +414,9 @@ PepsiMan.prototype.update = function () {
     		this.invincible = false;
     	}
     }
-    if (this.game.jumpButton) this.jumping = true;
+    if (this.game.jumpButton) {
+    	this.jumping = true;
+    }
     if (this.jumping) {
         if (this.jumpAnimation.isDone()) {
             this.jumpAnimation.elapsedTime = 0;
@@ -423,7 +424,6 @@ PepsiMan.prototype.update = function () {
             this.stuck = false;
         }
         var jumpDistance = this.jumpAnimation.elapsedTime / this.jumpAnimation.totalTime;
-
         if (jumpDistance > 0.46) {
           this.y += 4;
         } else {
@@ -537,7 +537,7 @@ function OminousFigure(game, spritesheet) {
     this.speed = 1;
     this.game = game;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x + 150, this.y + 150, this.animation.frameWidth + 105, this.animation.frameHeight);
+	this.boundingbox = new BoundingBox(this.x + 150, this.y + 160, this.animation.frameWidth + 105, this.animation.frameHeight);
 }
 
 OminousFigure.prototype.draw = function () {
@@ -609,7 +609,7 @@ function Crate(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 260, -200);
     }
-	this.boundingbox = new BoundingBox(this.x, this.y + 45, this.animation.frameWidth - 460, this.animation.frameHeight - 505);
+	this.boundingbox = new BoundingBox(this.x, this.y + 25, this.animation.frameWidth - 460, this.animation.frameHeight - 480);
 };
 
 Crate.prototype = new Entity();
@@ -619,7 +619,7 @@ Crate.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox = new BoundingBox(this.x, this.y + 45, this.animation.frameWidth - 460, this.animation.frameHeight - 505);
+	this.boundingbox = new BoundingBox(this.x, this.y + 25, this.animation.frameWidth - 460, this.animation.frameHeight - 480);
 	Entity.prototype.update.call(this);
 };
 
@@ -725,7 +725,7 @@ function Wall (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 245, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 7, this.y + 25, this.animation.frameWidth - 127, this.animation.frameHeight - 165);
+	this.boundingbox = new BoundingBox(this.x + 7, this.y + 15, this.animation.frameWidth - 127, this.animation.frameHeight - 165);
 };
 
 Wall.prototype = new Entity();
@@ -735,7 +735,7 @@ Wall.prototype.update = function() {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox = new BoundingBox(this.x + 7, this.y + 25, this.animation.frameWidth - 127, this.animation.frameHeight - 165);
+	this.boundingbox = new BoundingBox(this.x + 7, this.y + 15, this.animation.frameWidth - 127, this.animation.frameHeight - 165);
 	Entity.prototype.update.call(this);
 };
 
@@ -832,7 +832,7 @@ Obstacle_Spawner.prototype.update = function () {
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
 //		  type %= 5;
-		  type = 1  ; //Testing individual obstacles
+		  type = 4; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
@@ -973,7 +973,7 @@ function Bullet(game, spritesheet, pepsimane) {
     this.shooting = false;
     this.live = true;
     this.ctx = game.ctx;
-	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 130);
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 125);
 }
 
 Bullet.prototype.draw = function () {
@@ -993,7 +993,7 @@ Bullet.prototype.update = function () {
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
     this.y -= this.speed;
-	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 130);
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 125);
 	for (var i = 0; i < this.game.obstacles.length; i++) {
 		var ob = this.game.obstacles[i];
 		if(ob instanceof Wall && this.boundingbox.collide(ob.boundingbox) && this.live && ob.live) {
