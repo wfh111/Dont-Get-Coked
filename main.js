@@ -930,6 +930,143 @@ Invincible.prototype.draw = function () {
 	}
 };
 
+function Score_Multiplier (game, spritesheet, lane) {
+	this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+	this.speed = 60;
+	this.ctx = game.ctx;
+	this.live = true;
+	if (lane === 0) {
+    	Entity.call(this, game, 65, -200);
+    } else if (lane === 1) {
+    	Entity.call(this, game, 155, -200);
+    } else {
+    	Entity.call(this, game, 245, -200);
+    }
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+};
+
+Score_Multiplier.prototype = new Entity();
+Score_Multiplier.prototype.constructor = Score_Multiplier;
+
+Score_Multiplier.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	this.speed =  60 * background_speed;
+	this.y += this.game.clockTick * this.speed;
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+	Entity.prototype.update.call(this);
+};
+
+Score_Multiplier.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.45);
+	    Entity.prototype.draw.call(this);
+	}
+};
+
+function Booster (game, spritesheet, lane) {
+	this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+	this.speed = 60;
+	this.ctx = game.ctx;
+	this.live = true;
+	if (lane === 0) {
+    	Entity.call(this, game, 65, -200);
+    } else if (lane === 1) {
+    	Entity.call(this, game, 155, -200);
+    } else {
+    	Entity.call(this, game, 245, -200);
+    }
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+};
+
+Booster.prototype = new Entity();
+Booster.prototype.constructor = Booster;
+
+Booster.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	this.speed =  60 * background_speed;
+	this.y += this.game.clockTick * this.speed;
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+	Entity.prototype.update.call(this);
+};
+
+Booster.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.45);
+	    Entity.prototype.draw.call(this);
+	}
+};
+
+function Food (game, spritesheet, lane, type) {
+	switch(type) {
+	case 0:
+		this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+		break;
+	case 1:
+		this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+		break;
+	case 2:
+		this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+		break;
+	case 3:
+		this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+		break;
+	case 4:
+		this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+		break;
+	}
+
+	this.speed = 60;
+	this.ctx = game.ctx;
+	this.live = true;
+	if (lane === 0) {
+    	Entity.call(this, game, 65, -200);
+    } else if (lane === 1) {
+    	Entity.call(this, game, 155, -200);
+    } else {
+    	Entity.call(this, game, 245, -200);
+    }
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+};
+
+Food.prototype = new Entity();
+Food.prototype.constructor = Food;
+
+Food.prototype.update = function() {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	this.speed =  60 * background_speed;
+	this.y += this.game.clockTick * this.speed;
+	this.boundingbox = new BoundingBox(this.x + 22, this.y, this.animation.frameWidth - 165, this.animation.frameHeight - 110);
+	Entity.prototype.update.call(this);
+};
+
+Food.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.45);
+	    Entity.prototype.draw.call(this);
+	}
+};
+
 function Powerup_Spawner(game, spritesheet) {
 	this.powerups = [];
 	this.game = game;
@@ -943,9 +1080,9 @@ Powerup_Spawner.prototype.constructor = Powerup_Spawner;
 
 Powerup_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-	if(this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0){
+	if (this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0){
 		var type = Math.floor(Math.random() * 100) + 1;
-//		  type %= 1;
+//		  type %= 3;
 		  type = 0; //Testing individual powerup
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
@@ -955,6 +1092,31 @@ Powerup_Spawner.prototype.update = function () {
 		  		this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 		  		break;
 		  }
+	}
+	if (this.counter % Math.ceil(4000 / background_speed) === 0 && this.counter !== 0) {
+		var type = Math.floor(Math.random() * 100) + 1;
+//		type %= 2;
+		type = 0 //Testing individual powerup
+		var lane = Math.floor(Math.random() * 10) + 1;
+		lane %= 3;
+//		lane = 0; //Test specific lane
+		switch(type) {
+		  case 0: //Score_Multiplier
+			  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
+			  	break;
+		  case 1: //Booster
+			  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
+			  	break;
+		}
+	}
+	if (this.counter % Math.ceil(1785 / background_speed) === 0 && this.counter !== 0) {
+		var type = Math.floor(Math.random() * 100) + 1;
+//		type %= 5;
+		type = 0 //Testing individual food
+		var lane = Math.floor(Math.random() * 10) + 1;
+		lane %= 3;
+//		lane = 0; //Test specific lane
+		this.powerups.push(new Food(this.game, this.spritesheet, lane, type));
 	}
 	var numPowerup = this.powerups.length;
 	for(i = 0; i < numPowerup; i++) {
