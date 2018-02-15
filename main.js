@@ -423,7 +423,7 @@ PepsiMan.prototype.update = function () {
             this.jumpAnimation.elapsedTime = 0;
             this.jumping = false;
             this.stuck = false;
-            if (this.spike !== undefined) {
+            if (this.spike !== undefined) { //Fixed
                 this.spike.live = false;
             }
         }
