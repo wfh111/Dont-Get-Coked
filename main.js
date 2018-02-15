@@ -10,7 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = false;
+var bound_box = true;
 var gameEngine = new GameEngine();
 var chaser;
 
@@ -520,7 +520,11 @@ PepsiMan.prototype.update = function () {
     		this.y += this.game.clockTick * ob.speed;
     	}
     }
-	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
+    if(this.jumping) {
+    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 70, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
+    } else {
+    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
+    }
 	if (this.boundingbox.collide(chaser.boundingbox)) {
 		console.log("Game Over");
 		this.game.finalScore = this.score;
@@ -609,7 +613,7 @@ function Crate(game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 260, -200);
     }
-	this.boundingbox = new BoundingBox(this.x, this.y + 25, this.animation.frameWidth - 460, this.animation.frameHeight - 480);
+	this.boundingbox = new BoundingBox(this.x, this.y + 30, this.animation.frameWidth - 460, this.animation.frameHeight - 480);
 };
 
 Crate.prototype = new Entity();
@@ -619,7 +623,7 @@ Crate.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.speed = 60 * background_speed;
 	this.y += this.game.clockTick * this.speed;
-	this.boundingbox = new BoundingBox(this.x, this.y + 25, this.animation.frameWidth - 460, this.animation.frameHeight - 480);
+	this.boundingbox = new BoundingBox(this.x, this.y + 30, this.animation.frameWidth - 460, this.animation.frameHeight - 480);
 	Entity.prototype.update.call(this);
 };
 
@@ -831,8 +835,8 @@ Obstacle_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
-		  type %= 5;
-//		  type = 4; //Testing individual obstacles
+//		  type %= 5;
+		  type = 1; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
