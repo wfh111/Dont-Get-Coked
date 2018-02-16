@@ -184,7 +184,7 @@ Background3.prototype.update = function () {
 
 // no inheritance
 function Background4(game, spritesheet) {
-	
+
     this.x = 0;
     this.y = 0;
     this.speed = 3;
@@ -305,7 +305,7 @@ startScreen.prototype.draw = function(ctx) {
 			ctx.fillText("Jump Out of Spikes!", 210, 500);
 			ctx.fillText("Do it For Pepsi!", 100, 485);
 		}
-		
+
 	}
 }
 
@@ -337,7 +337,7 @@ gameOver.prototype.draw = function(ctx) {
 		ctx.font = "20pt Arial";
 		ctx.fillText("COKE HAS TAKEN OVER!", 40, 550);
 	}
-		
+
 }
 
 function LevelDisplay(game, color, x, y) {
@@ -377,6 +377,7 @@ function PepsiMan(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
     this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 801, 894, 0.08, 4, false, true);
     this.shootAnimation = new Animation(AM.getAsset("./img/shoot.png"), 0, 0, 589, 594, 0.05, 4, false, true);
+    this.invincibleAnimation = new Animation(AM.getAsset("./img/theboyi.png"), 0, 0, 338, 540, 0.05, 14, true, true);
     //this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 799, 894, 0.05, 5, false, true);
     this.jumping = false;
     this.x = middle_lane;
@@ -410,7 +411,11 @@ PepsiMan.prototype.draw = function () {
   } else if (this.shooting) {
       this.shootAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
   } else {
-      this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      if (this.invincible) {
+        this.invincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      } else {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      }
   }
 	//this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
 }
@@ -422,7 +427,7 @@ PepsiMan.prototype.update = function () {
     //if (this.x > 400) this.x = 0;
     if (this.y >= 150 && !this.stuck) { // makeshift stay alive scale
       this.y -= 0.1;
-    }	
+    }
     this.currentTime += this.game.clockTick;
     if (this.invincible) {
 //    	console.log(this.currentTime - this.prevTime); //Bug Check
@@ -515,8 +520,6 @@ PepsiMan.prototype.update = function () {
     		pwr.live = false;
     		this.invincible = true;
     		this.prevTime = this.currentTime;
-    		this.score += 1000;
-    		gameScore += 1000;
     	}
     }
     for (var i = 0; i < this.game.obstacles.length; i++) {
@@ -542,12 +545,12 @@ PepsiMan.prototype.update = function () {
     		this.y += this.game.clockTick * ob.speed;
     	}
     }
-//    if(this.jumping) {
-//    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
-//    } 
-//    else {
+    if(this.jumping) {
+    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
+    }
+    else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
-//    }
+    }
 	if (this.boundingbox.collide(chaser.boundingbox)) {
 		console.log("Game Over");
 		this.game.finalScore = this.score;
@@ -660,7 +663,7 @@ Crate.prototype.draw = function () {
   }
 	if(this.live) {
 	    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
-	    Entity.prototype.draw.call(this);	
+	    Entity.prototype.draw.call(this);
 	}
 };
 //0, 1300
@@ -908,7 +911,7 @@ Obstacle_Spawner.prototype.draw = function () {
 	}
 };
 function Invincible (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+	this.animation = new Animation(spritesheet, 0, 0, 210, 205, .1, 18, true, false);
 	this.speed = 60;
 	this.ctx = game.ctx;
 	this.live = true;
@@ -1097,44 +1100,37 @@ Powerup_Spawner.prototype.constructor = Powerup_Spawner;
 
 Powerup_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-	if (this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0){
-		var type = Math.floor(Math.random() * 100) + 1;
-//		  type %= 3;
-		  type = 0; //Testing individual powerup
+	if (this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0) { //9250
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test powerup in specific lane
-		  switch(type) {
-		  case 0: //Invincibility
-		  		this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
-		  		break;
-		  }
+		  this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 	}
-	if (this.counter % Math.ceil(4000 / background_speed) === 0 && this.counter !== 0) {
-		var type = Math.floor(Math.random() * 100) + 1;
-//		type %= 2;
-		type = 0 //Testing individual powerup
-		var lane = Math.floor(Math.random() * 10) + 1;
-		lane %= 3;
-//		lane = 0; //Test specific lane
-		switch(type) {
-		  case 0: //Score_Multiplier
-			  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
-			  	break;
-		  case 1: //Booster
-			  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
-			  	break;
-		}
-	}
-	if (this.counter % Math.ceil(1785 / background_speed) === 0 && this.counter !== 0) {
-		var type = Math.floor(Math.random() * 100) + 1;
-//		type %= 5;
-		type = 0 //Testing individual food
-		var lane = Math.floor(Math.random() * 10) + 1;
-		lane %= 3;
-//		lane = 0; //Test specific lane
-		this.powerups.push(new Food(this.game, this.spritesheet, lane, type));
-	}
+//	if (this.counter % Math.ceil(4000 / background_speed) === 0 && this.counter !== 0) { //4000
+//		var type = Math.floor(Math.random() * 100) + 1;
+////		type %= 2;
+//		type = 0 //Testing individual powerup
+//		var lane = Math.floor(Math.random() * 10) + 1;
+//		lane %= 3;
+////		lane = 0; //Test specific lane
+//		switch(type) {
+//		  case 0: //Score_Multiplier
+//			  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
+//			  	break;
+//		  case 1: //Booster
+//			  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
+//			  	break;
+//		}
+//	}
+//	if (this.counter % Math.ceil(1785 / background_speed) === 0 && this.counter !== 0) { //1785
+//		var type = Math.floor(Math.random() * 100) + 1;
+////		type %= 5;
+//		type = 0 //Testing individual food
+//		var lane = Math.floor(Math.random() * 10) + 1;
+//		lane %= 3;
+////		lane = 0; //Test specific lane
+//		this.powerups.push(new Food(this.game, this.spritesheet, lane, type));
+//	}
 	var numPowerup = this.powerups.length;
 	for(i = 0; i < numPowerup; i++) {
 		this.powerups[i].update();
@@ -1202,6 +1198,7 @@ AM.queueDownload("./img/bg5.png");
 AM.queueDownload("./img/bg6.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
+AM.queueDownload("./img/theboyi.png");
 AM.queueDownload("./img/jump.png");
 AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
@@ -1209,12 +1206,13 @@ AM.queueDownload("./img/Powerups.png");
 AM.queueDownload("./img/pep16v2.png");
 AM.queueDownload("./img/newpepsi.jpg");
 AM.queueDownload("./img/newcoke.jpg");
+AM.queueDownload("./img/crystal_pepsi.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
 //    var gameEngine = new GameEngine();
-    
+
 
     gameEngine.running = false;
     gameEngine.over = false;
@@ -1222,14 +1220,14 @@ AM.downloadAll(function () {
     var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
-    
+
     var GO = new gameOver(gameEngine, AM.getAsset("./img/newcoke.jpg"), 0, 0);
     gameEngine.addEntity(GO);
     console.log(GO);
-    
+
     gameEngine.init(ctx);
     gameEngine.start();
-    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/Powerups.png"));
+    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png"));
     var obstacleSpawner = new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png"));
     chaser = new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png"));
     gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
@@ -1245,6 +1243,6 @@ AM.downloadAll(function () {
     //gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
-    
+
     console.log("All Done!");
 });
