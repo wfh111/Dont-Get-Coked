@@ -515,8 +515,6 @@ PepsiMan.prototype.update = function () {
     		pwr.live = false;
     		this.invincible = true;
     		this.prevTime = this.currentTime;
-    		this.score += 1000;
-    		gameScore += 1000;
     	}
     }
     for (var i = 0; i < this.game.obstacles.length; i++) {
@@ -542,12 +540,12 @@ PepsiMan.prototype.update = function () {
     		this.y += this.game.clockTick * ob.speed;
     	}
     }
-//    if(this.jumping) {
-//    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
-//    } 
-//    else {
+    if(this.jumping) {
+    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
+    } 
+    else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
-//    }
+    }
 	if (this.boundingbox.collide(chaser.boundingbox)) {
 		console.log("Game Over");
 		this.game.finalScore = this.score;
@@ -908,7 +906,7 @@ Obstacle_Spawner.prototype.draw = function () {
 	}
 };
 function Invincible (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 0, 210, 200, .08, 18, true, false);
+	this.animation = new Animation(spritesheet, 0, 0, 210, 205, .1, 18, true, false);
 	this.speed = 60;
 	this.ctx = game.ctx;
 	this.live = true;
@@ -1097,44 +1095,37 @@ Powerup_Spawner.prototype.constructor = Powerup_Spawner;
 
 Powerup_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-	if (this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0){
-		var type = Math.floor(Math.random() * 100) + 1;
-//		  type %= 3;
-		  type = 0; //Testing individual powerup
+	if (this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0) { //9250
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test powerup in specific lane
-		  switch(type) {
-		  case 0: //Invincibility
-		  		this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
-		  		break;
-		  }
+		  this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 	}
-	if (this.counter % Math.ceil(4000 / background_speed) === 0 && this.counter !== 0) {
-		var type = Math.floor(Math.random() * 100) + 1;
-//		type %= 2;
-		type = 0 //Testing individual powerup
-		var lane = Math.floor(Math.random() * 10) + 1;
-		lane %= 3;
-//		lane = 0; //Test specific lane
-		switch(type) {
-		  case 0: //Score_Multiplier
-			  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
-			  	break;
-		  case 1: //Booster
-			  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
-			  	break;
-		}
-	}
-	if (this.counter % Math.ceil(1785 / background_speed) === 0 && this.counter !== 0) {
-		var type = Math.floor(Math.random() * 100) + 1;
-//		type %= 5;
-		type = 0 //Testing individual food
-		var lane = Math.floor(Math.random() * 10) + 1;
-		lane %= 3;
-//		lane = 0; //Test specific lane
-		this.powerups.push(new Food(this.game, this.spritesheet, lane, type));
-	}
+//	if (this.counter % Math.ceil(4000 / background_speed) === 0 && this.counter !== 0) { //4000
+//		var type = Math.floor(Math.random() * 100) + 1;
+////		type %= 2;
+//		type = 0 //Testing individual powerup
+//		var lane = Math.floor(Math.random() * 10) + 1;
+//		lane %= 3;
+////		lane = 0; //Test specific lane
+//		switch(type) {
+//		  case 0: //Score_Multiplier
+//			  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
+//			  	break;
+//		  case 1: //Booster
+//			  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
+//			  	break;
+//		}
+//	}
+//	if (this.counter % Math.ceil(1785 / background_speed) === 0 && this.counter !== 0) { //1785
+//		var type = Math.floor(Math.random() * 100) + 1;
+////		type %= 5;
+//		type = 0 //Testing individual food
+//		var lane = Math.floor(Math.random() * 10) + 1;
+//		lane %= 3;
+////		lane = 0; //Test specific lane
+//		this.powerups.push(new Food(this.game, this.spritesheet, lane, type));
+//	}
 	var numPowerup = this.powerups.length;
 	for(i = 0; i < numPowerup; i++) {
 		this.powerups[i].update();
@@ -1209,6 +1200,7 @@ AM.queueDownload("./img/Powerups.png");
 AM.queueDownload("./img/pep16v2.png");
 AM.queueDownload("./img/newpepsi.jpg");
 AM.queueDownload("./img/newcoke.jpg");
+AM.queueDownload("./img/crystal_pepsi.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1229,7 +1221,7 @@ AM.downloadAll(function () {
     
     gameEngine.init(ctx);
     gameEngine.start();
-    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/Powerups.png"));
+    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png"));
     var obstacleSpawner = new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png"));
     chaser = new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png"));
     gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
