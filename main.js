@@ -184,7 +184,7 @@ Background3.prototype.update = function () {
 
 // no inheritance
 function Background4(game, spritesheet) {
-	
+
     this.x = 0;
     this.y = 0;
     this.speed = 3;
@@ -305,7 +305,7 @@ startScreen.prototype.draw = function(ctx) {
 			ctx.fillText("Jump Out of Spikes!", 210, 500);
 			ctx.fillText("Do it For Pepsi!", 100, 485);
 		}
-		
+
 	}
 }
 
@@ -337,7 +337,7 @@ gameOver.prototype.draw = function(ctx) {
 		ctx.font = "20pt Arial";
 		ctx.fillText("COKE HAS TAKEN OVER!", 40, 550);
 	}
-		
+
 }
 
 function LevelDisplay(game, color, x, y) {
@@ -377,6 +377,7 @@ function PepsiMan(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
     this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 801, 894, 0.08, 4, false, true);
     this.shootAnimation = new Animation(AM.getAsset("./img/shoot.png"), 0, 0, 589, 594, 0.05, 4, false, true);
+    this.invincibleAnimation = new Animation(AM.getAsset("./img/theboyi.png"), 0, 0, 338, 540, 0.05, 14, true, true);
     //this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 799, 894, 0.05, 5, false, true);
     this.jumping = false;
     this.x = middle_lane;
@@ -410,7 +411,11 @@ PepsiMan.prototype.draw = function () {
   } else if (this.shooting) {
       this.shootAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
   } else {
-      this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      if (this.invincible) {
+        this.invincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      } else {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      }
   }
 	//this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
 }
@@ -422,7 +427,7 @@ PepsiMan.prototype.update = function () {
     //if (this.x > 400) this.x = 0;
     if (this.y >= 150 && !this.stuck) { // makeshift stay alive scale
       this.y -= 0.1;
-    }	
+    }
     this.currentTime += this.game.clockTick;
     if (this.invincible) {
 //    	console.log(this.currentTime - this.prevTime); //Bug Check
@@ -542,7 +547,7 @@ PepsiMan.prototype.update = function () {
     }
     if(this.jumping) {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
-    } 
+    }
     else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
     }
@@ -658,7 +663,7 @@ Crate.prototype.draw = function () {
   }
 	if(this.live) {
 	    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
-	    Entity.prototype.draw.call(this);	
+	    Entity.prototype.draw.call(this);
 	}
 };
 //0, 1300
@@ -1193,6 +1198,7 @@ AM.queueDownload("./img/bg5.png");
 AM.queueDownload("./img/bg6.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
+AM.queueDownload("./img/theboyi.png");
 AM.queueDownload("./img/jump.png");
 AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
@@ -1206,7 +1212,7 @@ AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
 //    var gameEngine = new GameEngine();
-    
+
 
     gameEngine.running = false;
     gameEngine.over = false;
@@ -1214,11 +1220,11 @@ AM.downloadAll(function () {
     var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
-    
+
     var GO = new gameOver(gameEngine, AM.getAsset("./img/newcoke.jpg"), 0, 0);
     gameEngine.addEntity(GO);
     console.log(GO);
-    
+
     gameEngine.init(ctx);
     gameEngine.start();
     var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png"));
@@ -1237,6 +1243,6 @@ AM.downloadAll(function () {
     //gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
-    
+
     console.log("All Done!");
 });
