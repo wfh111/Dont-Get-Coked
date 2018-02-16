@@ -1155,6 +1155,7 @@ function Bullet(game, spritesheet, pepsimane) {
     this.animation = new Animation(spritesheet, 0, 0, 155.75, 156, 0.05, 16, true, true);
     this.x = pepsimane.x + 20;
     this.y = pepsimane.y - 5;
+    this.startY = this.y;
     this.speed = 4;
     this.game = game;
     this.Right = false;
@@ -1182,6 +1183,9 @@ Bullet.prototype.update = function () {
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
     this.y -= this.speed;
+    if (this.startY - this.y >= 230) {
+    	this.live = false;
+    }
 	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 100);
 	for (var i = 0; i < this.game.obstacles.length; i++) {
 		var ob = this.game.obstacles[i];
