@@ -1205,7 +1205,7 @@ AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/jump.png");
 AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
-AM.queueDownload("./img/crystal_pepsi.png");
+AM.queueDownload("./img/Powerups.png");
 AM.queueDownload("./img/pep16v2.png");
 AM.queueDownload("./img/newpepsi.jpg");
 AM.queueDownload("./img/newcoke.jpg");
@@ -1229,7 +1229,7 @@ AM.downloadAll(function () {
     
     gameEngine.init(ctx);
     gameEngine.start();
-    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/crystal_pepsi.png"));
+    var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/Powerups.png"));
     var obstacleSpawner = new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png"));
     chaser = new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png"));
     gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
