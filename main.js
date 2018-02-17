@@ -455,7 +455,7 @@ PepsiMan.prototype.update = function () {
     		this.boosted = false;
     		this.invincible = false;
     	}
-    	this.y -= 0.5;
+    	this.y -= 1;
     }
     if (this.multiplierActive) {
     	if (this.currentTime - this.prevTimeM >= 15) {
@@ -1363,7 +1363,7 @@ Powerup_Spawner.prototype.update = function () {
       //break;
     }
 	}
-	if (this.counter % Math.ceil(427 / background_speed) === 0 && this.counter !== 0) { //1785
+	if (this.counter % Math.ceil(678 / background_speed) === 0 && this.counter !== 0) { //1785
 		var type = Math.floor(Math.random() * 100) + 1;
 		type %= 5;
 //		type = 0; //Testing individual food
@@ -1439,7 +1439,7 @@ Bullet.prototype.update = function () {
     if (this.startY - this.y >= 230) {
     	this.live = false;
     }
-	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 100);
+	this.boundingbox = new BoundingBox(this.x, this.y + 4, this.animation.frameWidth - 130, this.animation.frameHeight - 80);
 	for (var i = 0; i < this.game.obstacles.length; i++) {
 		var ob = this.game.obstacles[i];
 		if(ob instanceof Wall && this.boundingbox.collide(ob.boundingbox) && this.live && ob.live) {
