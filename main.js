@@ -1363,7 +1363,7 @@ Powerup_Spawner.prototype.update = function () {
       //break;
     }
 	}
-	if (this.counter % Math.ceil(875 / background_speed) === 0 && this.counter !== 0) { //1785
+	if (this.counter % Math.ceil(427 / background_speed) === 0 && this.counter !== 0) { //1785
 		var type = Math.floor(Math.random() * 100) + 1;
 		type %= 5;
 //		type = 0; //Testing individual food
