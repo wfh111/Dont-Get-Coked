@@ -186,7 +186,7 @@ Background3.prototype.update = function () {
 
 // no inheritance
 function Background4(game, spritesheet) {
-	
+
     this.x = 0;
     this.y = 0;
     this.speed = 3;
@@ -307,7 +307,7 @@ startScreen.prototype.draw = function(ctx) {
 			ctx.fillText("Jump Out of Spikes!", 210, 500);
 			ctx.fillText("Do it For Pepsi!", 100, 485);
 		}
-		
+
 	}
 }
 
@@ -339,7 +339,7 @@ gameOver.prototype.draw = function(ctx) {
 		ctx.font = "20pt Arial";
 		ctx.fillText("COKE HAS TAKEN OVER!", 40, 550);
 	}
-		
+
 }
 
 function LevelDisplay(game, color, x, y) {
@@ -378,9 +378,13 @@ LevelDisplay.prototype.draw = function() {
 function PepsiMan(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 338, 540, 0.05, 14, true);
     this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 801, 894, 0.08, 4, false, true);
+    this.jumpInvincibleAnimation = new Animation(AM.getAsset("./img/jumpi.png"), 0, 0, 801, 894, 0.08, 4, false, true);
     this.shootAnimation = new Animation(AM.getAsset("./img/shoot.png"), 0, 0, 589, 594, 0.05, 4, false, true);
+    this.shootInvincibleAnimation = new Animation(AM.getAsset("./img/shooti.png"), 0, 0, 589, 594, 0.05, 4, false, true);
+    this.invincibleAnimation = new Animation(AM.getAsset("./img/theboyi.png"), 0, 0, 338, 540, 0.05, 14, true, true);
     //this.jumpAnimation = new Animation(AM.getAsset("./img/jump.png"), 0, 0, 799, 894, 0.05, 5, false, true);
     this.jumping = false;
+    this.jumpingInv = false;
     this.x = middle_lane;
     this.y = 150;
     this.groundY;
@@ -389,7 +393,9 @@ function PepsiMan(game, spritesheet) {
     this.Right = false;
     this.Left = false;
     this.shooting = false;
+    this.shootingInv = false;
     this.fired = false;
+    this.firedInv = false;
     this.stuck = false;
     this.invincible = false;
     this.multiplierActive = false;
@@ -411,11 +417,19 @@ PepsiMan.prototype.draw = function () {
       this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
   }
   if (this.jumping) {
-      this.jumpAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 15, this.y - 10, 0.14);
+    this.jumpAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 15, this.y - 10, 0.14);
+  } else if (this.jumpingInv) {
+    this.jumpInvincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 15, this.y - 10, 0.14);
   } else if (this.shooting) {
-      this.shootAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
+    this.shootAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
+  } else if (this.shootingInv) {
+    this.shootInvincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
   } else {
-      this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      if (this.invincible) {
+        this.invincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      } else {
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
+      }
   }
 	//this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
 }
@@ -428,14 +442,6 @@ PepsiMan.prototype.update = function () {
     if (this.y >= 100 && !this.stuck) { // makeshift stay alive scale
       this.y -= 0.1;
     }	
-    if (this.boosted) {
-    	this.invincibility = true;
-    	if(this.y <= 100) {
-    		this.boosted = false;
-    		this.invincibility = false;
-    	}
-    	this.y -= 0.5;
-    }
     this.currentTime += this.game.clockTick;
     if (this.invincible) {
 //    	console.log(this.currentTime - this.prevTime); //Bug Check
@@ -443,15 +449,27 @@ PepsiMan.prototype.update = function () {
     		this.invincible = false;
     	}
     }
+    if (this.boosted) {
+    	this.invincible= true;
+    	if(this.y <= 100) {
+    		this.boosted = false;
+    		this.invincible = false;
+    	}
+    	this.y -= 0.5;
+    }
     if (this.multiplierActive) {
     	if (this.currentTime - this.prevTimeM >= 15) {
     		this.multiplierActive = false;
     		multiplier = 1;
     	}
     }
-    if (this.game.jumpButton) {
+    if (this.game.jumpButton && !this.invincible) {
     	this.jumping = true;
     }
+    if (this.game.jumpButton && this.invincible) {
+      this.jumpingInv = true;
+    }
+
     if (this.jumping) {
         if (this.jumpAnimation.isDone()) {
             this.jumpAnimation.elapsedTime = 0;
@@ -469,19 +487,53 @@ PepsiMan.prototype.update = function () {
         }
     }
 
-    if (this.game.shootButton) {
+    if (this.jumpingInv) {
+        if (this.jumpInvincibleAnimation.isDone()) {
+            this.jumpInvincibleAnimation.elapsedTime = 0;
+            this.jumpingInv = false;
+            this.stuck = false;
+            if (this.spike !== undefined) { //Fixed
+                this.spike.live = false;
+            }
+        }
+        var jumpDistance = this.jumpInvincibleAnimation.elapsedTime / this.jumpInvincibleAnimation.totalTime;
+        if (jumpDistance > 0.46) {
+          this.y += 3;
+        } else {
+          this.y -= 3;
+        }
+    }
+
+    if (this.game.shootButton && !this.invincible) {
       this.shooting = true;
-      if (!this.fired) {
+      if (!this.fired && !this.firedInv) {
         gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png"), this));
         this.fired = true;
       }
     }
+
+    if (this.game.shootButton && this.invincible) {
+      this.shootingInv = true;
+      if (!this.fired && !this.firedInv) {
+        gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png"), this));
+        this.firedInv = true;
+      }
+    }
+
     if (this.shooting) {
         if (this.shootAnimation.isDone()) {
             this.shootAnimation.elapsedTime = 0;
             this.shooting = false;
             this.fired = false;
         }
+    }
+
+    if (this.shootingInv) {
+      if (this.shootInvincibleAnimation.isDone()) {
+        this.shootInvincibleAnimation.elapsedTime = 0;
+        this.shootingInv = false;
+        this.firedInv = false;
+      }
     }
 
     if (this.x <= left_lane + (lane_size / 2)) {
@@ -580,7 +632,7 @@ PepsiMan.prototype.update = function () {
     }
     if(this.jumping) {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
-    } 
+    }
     else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
     }
@@ -696,7 +748,7 @@ Crate.prototype.draw = function () {
   }
 	if(this.live) {
 	    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.1);//.1
-	    Entity.prototype.draw.call(this);	
+	    Entity.prototype.draw.call(this);
 	}
 };
 //0, 1300
@@ -1287,7 +1339,7 @@ Powerup_Spawner.prototype.update = function () {
 //		  lane = 0; //Test powerup in specific lane
 		  this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 	}
-	if (this.counter % Math.ceil(4275 / background_speed) === 0 && this.counter !== 0) { //4275
+	if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
 		var type = Math.floor(Math.random() * 100) + 1;
 		type %= 2;
 //		type = 0; //Testing individual powerup
@@ -1395,8 +1447,11 @@ AM.queueDownload("./img/bg5.png");
 AM.queueDownload("./img/bg6.png");
 AM.queueDownload("./img/obstacles.png");
 AM.queueDownload("./img/theboy.png");
+AM.queueDownload("./img/theboyi.png");
 AM.queueDownload("./img/jump.png");
+AM.queueDownload("./img/jumpi.png");
 AM.queueDownload("./img/shoot.png");
+AM.queueDownload("./img/shooti.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/Powerups.png");
 AM.queueDownload("./img/pep16v2.png");
@@ -1408,7 +1463,7 @@ AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
     var ctx = canvas.getContext("2d");
 //    var gameEngine = new GameEngine();
-    
+
 
     gameEngine.running = false;
     gameEngine.over = false;
@@ -1416,11 +1471,11 @@ AM.downloadAll(function () {
     var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
-    
+
     var GO = new gameOver(gameEngine, AM.getAsset("./img/newcoke.jpg"), 0, 0);
     gameEngine.addEntity(GO);
     console.log(GO);
-    
+
     gameEngine.init(ctx);
     gameEngine.start();
     var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/Powerups.png"));
@@ -1439,6 +1494,6 @@ AM.downloadAll(function () {
     //gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png")));
     gameEngine.addEntity(new Score(gameEngine, gameScore, "yellow", 280, 480));
     gameEngine.addEntity(new LevelDisplay(gameEngine, "yellow", 170, 200));
-    
+
     console.log("All Done!");
 });
