@@ -388,7 +388,7 @@ function PepsiMan(game, spritesheet) {
     this.x = middle_lane;
     this.y = 150;
     this.groundY;
-    this.speed = 5;
+    this.speed = 8;
     this.game = game;
     this.Right = false;
     this.Left = false;
@@ -440,8 +440,8 @@ PepsiMan.prototype.update = function () {
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
     if (this.y >= 100 && !this.stuck) { // makeshift stay alive scale
-      this.y -= 0.1;
-    }	
+      //this.y -= 0.1;
+    }
     this.currentTime += this.game.clockTick;
     if (this.invincible) {
 //    	console.log(this.currentTime - this.prevTime); //Bug Check
@@ -600,10 +600,10 @@ PepsiMan.prototype.update = function () {
     	if((pwr instanceof Burger || pwr instanceof Popsicle || pwr instanceof Icecream || pwr instanceof Pizza)
     			&& this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
     		pwr.live = false;
-    		this.y += .5;
+    		this.y -= 4;
     	}
     	if(pwr instanceof Money && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
-    		gameScore += 200;
+    		gameScore += 500;
     		pwr.live = false;
     	}
     }
@@ -623,7 +623,7 @@ PepsiMan.prototype.update = function () {
     		ob.live = false;
     	}
     	else if(ob instanceof Target_Coke && this.boundingbox.collide(ob.boundingbox) && !this.jumping && ob.live && !this.invincible) {
-    		this.y += this.game.clockTick * 2000;
+    		this.y += (this.game.clockTick * 2000) * current_level / 2;
     		ob.live = false;
     	}
     	else if((ob instanceof Wall || ob instanceof Crate) && this.boundingbox.collide(ob.boundingbox) && !this.invincible && ob.live) {
@@ -1341,19 +1341,27 @@ Powerup_Spawner.prototype.update = function () {
 	}
 	if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
 		var type = Math.floor(Math.random() * 100) + 1;
-		type %= 2;
+		type %= 4;
 //		type = 0; //Testing individual powerup
 		var lane = Math.floor(Math.random() * 10) + 1;
 		lane %= 3;
 //		lane = 0; //Test specific lane
-		switch(type) {
-		  case 0: //Score_Multiplier
-			  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
-			  	break;
-		  case 1: //Booster
-			  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
-			  	break;
-		}
+		// switch(type) {
+		//   case 0: //Score_Multiplier
+		// 	  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
+		// 	  	break;
+		//   case 1: //Booster
+		// 	  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
+		// 	  	break;
+		// }
+
+    if (type < 3) {
+      this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
+      //break;
+    } else {
+      this.powerups.push(new Booster(this.game, this.spritesheet, lane));
+      //break;
+    }
 	}
 	if (this.counter % Math.ceil(875 / background_speed) === 0 && this.counter !== 0) { //1785
 		var type = Math.floor(Math.random() * 100) + 1;
