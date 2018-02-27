@@ -17,16 +17,18 @@ var chaser;
 var multiplier = 1;
 
 var backgroundSound;
-var crateSound;
-var spikeSound;
-var oilSound;
-var branchSound;
+var crateSound; //done
+var spikeSound; //done
+var oilSound; //done
+var branchSound; //done
 var shootSound;
-var rollingcanSound;
-var crystalSound;
-var foodSound;
-var moneySound;
-var breakingSound;
+var cokecanSound; //done
+var crystalSound; //done
+var foodSound; //done
+var moneySound; //done
+var jumpSound; //done
+var doubleSound; //done
+var boostSound; //done
 var gameoverSound;
 
 
@@ -1518,7 +1520,16 @@ AM.downloadAll(function () {
     console.log(GO);
     
     oilSound = new sound("./sounds/slip.mp3");
+    spikeSound = new sound("./sounds/spike.mp3");
     crystalSound = new sound("./sounds/invincible.mp3");
+    crateSound = new sound("./sounds/crate.mp3");
+    branchSound = new sound("./sounds/branch.mp3");
+    boostSound = new sound("./sounds/Booster2.mp3");
+    foodSound = new sound("./sounds/food.mp3");
+    jumpSound = new sound("./sounds/Jump.mp3");
+    moneySound = new sound("./sounds/money.mp3");
+    doubleSound = new sound("./sounds/multiplier/mp3");
+    cokecanSound = new sound("./sounds/coke_can.mp3");
 
     gameEngine.init(ctx);
     gameEngine.start();
