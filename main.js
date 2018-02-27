@@ -1365,7 +1365,7 @@ Powerup_Spawner.prototype.constructor = Powerup_Spawner;
 
 Powerup_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-	if (this.counter % Math.ceil(9250 / background_speed) === 0 && this.counter !== 0) { //9250
+	if (this.counter % Math.ceil(500 / background_speed) === 0 && this.counter !== 0) { //9250
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test powerup in specific lane
