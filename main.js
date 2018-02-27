@@ -631,7 +631,7 @@ PepsiMan.prototype.update = function () {
     	}
     }
     if(this.jumping) {
-    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 80, this.animation.frameWidth  - 310, this.animation.frameHeight - 520);
+    	this.boundingbox = new BoundingBox(this.x + 20, this.y + 40, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
     }
     else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
@@ -683,7 +683,7 @@ function Spike (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 255, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 5, this.y + 10, this.animation.frameWidth - 85, this.animation.frameHeight - 110);
+	this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
 };
 
 Spike.prototype = new Entity();
@@ -695,7 +695,7 @@ Spike.prototype.update = function() {
 	this.y += this.game.clockTick * this.speed;
 	spike_x = this.x;
 	spike_y = this.y;
-	this.boundingbox = new BoundingBox(this.x + 5, this.y + 10, this.animation.frameWidth - 85, this.animation.frameHeight - 110);
+	this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
 	Entity.prototype.update.call(this);
 };
 
@@ -946,8 +946,8 @@ Obstacle_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if(this.counter % Math.ceil(325 / background_speed) === 0){
 		var type = Math.floor(Math.random() * 100) + 1;
-		  type %= 5;
-//		  type = 1; //Testing individual obstacles
+//		  type %= 5;
+		  type = 0; //Testing individual obstacles
 		  var lane = Math.floor(Math.random() * 10) + 1;
 		  lane %= 3;
 //		  lane = 0; //Test obstacle in specific lane
