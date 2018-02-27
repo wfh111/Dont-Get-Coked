@@ -960,7 +960,7 @@ Target_Coke.prototype.draw = function () {
 //};
 //
 //Side_Coke.prototype.draw = function () {
-//	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);//0.4
+//	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
 //    Entity.prototype.draw.call(this);
 //};
 
