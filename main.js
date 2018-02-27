@@ -614,6 +614,7 @@ PepsiMan.prototype.update = function () {
     for (var i = 0; i < this.game.powerups.length; i++) {
     	var pwr = this.game.powerups[i];
     	if(pwr instanceof Invincible && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
+    		crystalSound.play();
     		pwr.live = false;
     		this.invincible = true;
     		this.prevTime = this.currentTime;
@@ -1517,6 +1518,7 @@ AM.downloadAll(function () {
     console.log(GO);
     
     oilSound = new sound("./sounds/slip.mp3");
+    crystalSound = new sound("./sounds/invincible.mp3");
 
     gameEngine.init(ctx);
     gameEngine.start();
