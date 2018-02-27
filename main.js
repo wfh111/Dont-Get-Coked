@@ -21,7 +21,7 @@ var crateSound; //done
 var spikeSound; //done
 var oilSound; //done
 var branchSound; //done
-var shootSound;
+var shootingSound;
 var cokecanSound; //done
 var crystalSound; //done
 var foodSound; //done
@@ -497,10 +497,12 @@ PepsiMan.prototype.update = function () {
     	}
     }
     if (this.game.jumpButton && !this.invincible) {
+    	jumpSound.play();
     	this.jumping = true;
     }
     if (this.game.jumpButton && this.invincible) {
-      this.jumpingInv = true;
+    	jumpSound.play();
+    	this.jumpingInv = true;
     }
 
     if (this.jumping) {
@@ -538,6 +540,7 @@ PepsiMan.prototype.update = function () {
     }
 
     if (this.game.shootButton && !this.invincible) {
+    	shootingSound.play();
       this.shooting = true;
       if (!this.fired && !this.firedInv) {
         gameEngine.addEntity(new Bullet(gameEngine, AM.getAsset("./img/pep16v2.png"), this));
@@ -622,21 +625,25 @@ PepsiMan.prototype.update = function () {
     		this.prevTime = this.currentTime;
     	}
     	if(pwr instanceof Score_Multiplier && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
+    		doubleSound.play();
     		pwr.live = false;
     		multiplier = 2;
     		this.multiplierActive = true;
     		this.prevTimeM = this.currentTime;
     	}
     	if(pwr instanceof Booster && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
+    		boostSound.play();
     		this.boosted = true;
     		this.invincible = true;
     	}
     	if((pwr instanceof Burger || pwr instanceof Popsicle || pwr instanceof Icecream || pwr instanceof Pizza)
     			&& this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
+    		foodSound.play();
     		pwr.live = false;
     		this.y -= 4;
     	}
     	if(pwr instanceof Money && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
+    		moneySound.play();
     		gameScore += 500;
     		pwr.live = false;
     	}
@@ -644,6 +651,7 @@ PepsiMan.prototype.update = function () {
     for (var i = 0; i < this.game.obstacles.length; i++) {
     	var ob = this.game.obstacles[i];
     	if(ob instanceof Spike && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.jumping && ob.live) {
+    		spikeSound.play();
     		this.y += this.game.clockTick * ob.speed;
     		this.stuck = true;
     		this.spike = ob;
@@ -654,14 +662,17 @@ PepsiMan.prototype.update = function () {
     		ob.live = false;
     	}
     	else if(ob instanceof Branch && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
+    		branchSound.play();
     		this.y += this.game.clockTick * 100;
     		ob.live = false;
     	}
     	else if(ob instanceof Target_Coke && this.boundingbox.collide(ob.boundingbox) && !this.jumping && ob.live && !this.invincible) {
+    		cokecanSound.play();
     		this.y += (this.game.clockTick * 2000) * current_level / 2;
     		ob.live = false;
     	}
     	else if((ob instanceof Wall || ob instanceof Crate) && this.boundingbox.collide(ob.boundingbox) && !this.invincible && ob.live) {
+    		crateSound.play();
     		this.y += this.game.clockTick * ob.speed;
     	}
     }
@@ -672,6 +683,7 @@ PepsiMan.prototype.update = function () {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
     }
 	if (this.boundingbox.collide(chaser.boundingbox)) {
+		gameoverSound.play();
 		console.log("Game Over");
 		this.game.finalScore = this.score;
 		this.game.over = true;
@@ -1528,8 +1540,11 @@ AM.downloadAll(function () {
     foodSound = new sound("./sounds/food.mp3");
     jumpSound = new sound("./sounds/Jump.mp3");
     moneySound = new sound("./sounds/money.mp3");
-    doubleSound = new sound("./sounds/multiplier/mp3");
+    doubleSound = new sound("./sounds/multiplier.mp3");
     cokecanSound = new sound("./sounds/coke_can.mp3");
+    gameoverSound = new sound("./sounds/Death.mp3");
+    shootingSound = new sound("./sounds/shooting.mp3");
+    
 
     gameEngine.init(ctx);
     gameEngine.start();
