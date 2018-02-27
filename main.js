@@ -16,6 +16,20 @@ var gameEngine = new GameEngine();
 var chaser;
 var multiplier = 1;
 
+var backgroundSound;
+var crateSound;
+var spikeSound;
+var oilSound;
+var branchSound;
+var shootSound;
+var rollingcanSound;
+var crystalSound;
+var foodSound;
+var moneySound;
+var breakingSound;
+var gameoverSound;
+
+
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
     this.startX = startX;
@@ -342,6 +356,23 @@ gameOver.prototype.draw = function(ctx) {
 
 }
 
+function sound(src) {
+	this.sound = document.createElement("audio");
+	this.sound.src = src;
+	this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
+
+
+
 function LevelDisplay(game, color, x, y) {
 	this.color = color;
 	this.x = x;
@@ -615,6 +646,7 @@ PepsiMan.prototype.update = function () {
     		this.spike = ob;
     	}
     	if(ob instanceof Oil && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
+    		oilSound.play();
     		this.y += this.game.clockTick * 60;
     		ob.live = false;
     	}
@@ -1483,6 +1515,8 @@ AM.downloadAll(function () {
     var GO = new gameOver(gameEngine, AM.getAsset("./img/newcoke.jpg"), 0, 0);
     gameEngine.addEntity(GO);
     console.log(GO);
+    
+    oilSound = new sound("./sounds/slip.mp3");
 
     gameEngine.init(ctx);
     gameEngine.start();
