@@ -15,7 +15,7 @@ var bound_box = false;
 var gameEngine = new GameEngine();
 var chaser;
 var multiplier = 1;
-
+var bossFight = true;
 var backgroundSound;
 var crateSound; //done
 var spikeSound; //done
@@ -955,29 +955,6 @@ Target_Coke.prototype.draw = function () {
 
 };
 
-//function Side_Coke (game, spritesheet, lane) {
-//	this.animation = new Animation(spritesheet, 0, 0, 190, 330, .2, 14, true, true);
-//	this.speed = 80;
-//	this.direction = "left";
-//	this.ctx = game.ctx;
-//    Entity.call(this, game, 300, 0);
-//};
-//
-//Side_Coke.prototype = new Entity();
-//Side_Coke.prototype.constructor = Side_Coke;
-//
-//Side_Coke.prototype.update = function() {
-//	this.speed = 100 * background_speed;
-//	this.x -= this.game.clockTick * this.speed;
-//	this.y += this.game.clockTick * (60 * background_speed);
-//	Entity.prototype.update.call(this);
-//};
-//
-//Side_Coke.prototype.draw = function () {
-//	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
-//    Entity.prototype.draw.call(this);
-//};
-
 function Obstacle_Spawner(game, spritesheet) {
 	this.obstacles = [];
 	this.game = game;
@@ -991,42 +968,119 @@ Obstacle_Spawner.prototype.constructor = Obstacle_Spawner;
 
 Obstacle_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-	if(this.counter % Math.ceil(325 / background_speed) === 0){
-		var type = Math.floor(Math.random() * 100) + 1;
-		  type %= 5;
-//		  type = 0; //Testing individual obstacles
-		  var lane = Math.floor(Math.random() * 10) + 1;
-		  lane %= 3;
-//		  lane = 0; //Test obstacle in specific lane
-		  while(lane === this.previous) {
-			  lane = Math.floor(Math.random() * 10) + 1;
+	if(!bossFight && current_level === 1) {
+		if(this.counter % Math.ceil(250 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 4;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
 			  lane %= 3;
-		  }
-		  this.previous = lane;
-		  switch(type) {
-		  case 0: //Spikes
-		  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
-		  		break;
-		  case 1: //Crate
-		      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
-		      	break;
-		  case 2: //Oil
-			  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
-			  	break;
-		  case 3: //Branch
-			  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
-			  	break;
-		  case 4: //Wall
-			  	this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
-			  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
-			  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));
-			  	break;
-//		  case 5: //Side_Coke
-//			  this.obstacles.push(new Side_Coke(this.game, this.spritesheet, 3));
-//			  break;
-		  }
-	} else if(this.counter % Math.ceil(1240 / background_speed) === 0) {
-		this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+//			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  }
+		}
+	}
+	else if(!bossFight && current_level === 2) {
+		if(this.counter % Math.ceil(325 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 4;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+//			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  }
+		} else if(this.counter % Math.ceil(1240 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
+	}
+	else if(!bossFight && current_level >= 3) {
+		if(this.counter % Math.ceil(325 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 5;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+//			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  case 4: //Wall
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));
+				  	break;
+			  }
+		} else if(this.counter % Math.ceil(1240 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
+	}
+	else if(bossFight && current_level === 1) {
+		if(this.counter % Math.ceil(150 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
+	}
+	else if(bossFight && current_level === 2) {
+		if(this.counter % Math.ceil(210 / background_speed) === 0) {
+			this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
+		  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
+		  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));		
+	  	}
+	}
+	else if(bossFight && current_level === 3) {
+		
+	}
+	else if(bossFight && current_level === 4) {
+		
 	}
 	var numObstacle = this.obstacles.length;
 	for(i = 0; i < numObstacle; i++) {
@@ -1386,54 +1440,69 @@ Powerup_Spawner.prototype.update = function () {
 //		  lane = 0; //Test powerup in specific lane
 		  this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 	}
-	if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
-		var type = Math.floor(Math.random() * 100) + 1;
-		type %= 4;
-//		type = 0; //Testing individual powerup
-		var lane = Math.floor(Math.random() * 10) + 1;
-		lane %= 3;
-//		lane = 0; //Test specific lane
-		// switch(type) {
-		//   case 0: //Score_Multiplier
-		// 	  	this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
-		// 	  	break;
-		//   case 1: //Booster
-		// 	  	this.powerups.push(new Booster(this.game, this.spritesheet, lane));
-		// 	  	break;
-		// }
-
-    if (type < 3) {
-      this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
-      //break;
-    } else {
-      this.powerups.push(new Booster(this.game, this.spritesheet, lane));
-      //break;
-    }
-	}
-	if (this.counter % Math.ceil(678 / background_speed) === 0 && this.counter !== 0) { //1785
-		var type = Math.floor(Math.random() * 100) + 1;
-		type %= 5;
-//		type = 0; //Testing individual food
-		var lane = Math.floor(Math.random() * 10) + 1;
-		lane %= 3;
-//		lane = 0; //Test specific lane
-		switch(type) {
-		case 0:
-			this.powerups.push(new Money(this.game, this.spritesheet, lane));
-			break;
-		case 1:
-			this.powerups.push(new Burger(this.game, this.spritesheet, lane));
-			break;
-		case 2:
-			this.powerups.push(new Popsicle(this.game, this.spritesheet, lane));
-			break;
-		case 3:
-			this.powerups.push(new Icecream(this.game, this.spritesheet, lane));
-			break;
-		case 4:
-			this.powerups.push(new Pizza(this.game, this.spritesheet, lane));
+	if(!bossFight) {
+		if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
+			var type = Math.floor(Math.random() * 100) + 1;
+			type %= 4;
+//			type = 0; //Testing individual powerup
+			var lane = Math.floor(Math.random() * 10) + 1;
+			lane %= 3;
+//			lane = 0; //Test specific lane
+		    if (type < 3) {
+		      this.powerups.push(new Score_Multiplier(this.game, this.spritesheet, lane));
+		      //break;
+		    } else {
+		      this.powerups.push(new Booster(this.game, this.spritesheet, lane));
+		      //break;
+		    }
 		}
-
+		if (this.counter % Math.ceil(678 / background_speed) === 0 && this.counter !== 0) { //1785
+			var type = Math.floor(Math.random() * 100) + 1;
+			type %= 5;
+//			type = 0; //Testing individual food
+			var lane = Math.floor(Math.random() * 10) + 1;
+			lane %= 3;
+//			lane = 0; //Test specific lane
+			switch(type) {
+			case 0:
+				this.powerups.push(new Money(this.game, this.spritesheet, lane));
+				break;
+			case 1:
+				this.powerups.push(new Burger(this.game, this.spritesheet, lane));
+				break;
+			case 2:
+				this.powerups.push(new Popsicle(this.game, this.spritesheet, lane));
+				break;
+			case 3:
+				this.powerups.push(new Icecream(this.game, this.spritesheet, lane));
+				break;
+			case 4:
+				this.powerups.push(new Pizza(this.game, this.spritesheet, lane));
+			}
+		}
+	}
+	if (bossFight) {
+		if (this.counter % Math.ceil(175 / background_speed) === 0 && this.counter !== 0) { //1785
+			var type = Math.floor(Math.random() * 100) + 1;
+			type %= 4;
+//			type = 0; //Testing individual food
+			var lane = Math.floor(Math.random() * 10) + 1;
+			lane %= 3;
+//			lane = 0; //Test specific lane
+			switch(type) {
+			case 0:
+				this.powerups.push(new Burger(this.game, this.spritesheet, lane));
+				break;
+			case 1:
+				this.powerups.push(new Popsicle(this.game, this.spritesheet, lane));
+				break;
+			case 2:
+				this.powerups.push(new Icecream(this.game, this.spritesheet, lane));
+				break;
+			case 3:
+				this.powerups.push(new Pizza(this.game, this.spritesheet, lane));
+			}
+		}
 	}
 	var numPowerup = this.powerups.length;
 	for(i = 0; i < numPowerup; i++) {
@@ -1513,6 +1582,19 @@ AM.queueDownload("./img/pep16v2.png");
 AM.queueDownload("./img/newpepsi.jpg");
 AM.queueDownload("./img/newcoke.jpg");
 AM.queueDownload("./img/crystal_pepsi.png");
+AM.queueDownload("./sounds/slip.mp3");
+AM.queueDownload("./sounds/spike.mp3");
+AM.queueDownload("./sounds/invincible.mp3");
+AM.queueDownload("./sounds/crate.mp3");
+AM.queueDownload("./sounds/branch.mp3");
+AM.queueDownload("./sounds/Booster2.mp3");
+AM.queueDownload("./sounds/food.mp3");
+AM.queueDownload("./sounds/Jump.mp3");
+AM.queueDownload("./sounds/money.mp3");
+AM.queueDownload("./sounds/multiplier.mp3");
+AM.queueDownload("./sounds/coke_can.mp3");
+AM.queueDownload("./sounds/Death.mp3");
+AM.queueDownload("./sounds/shooting.mp3");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
