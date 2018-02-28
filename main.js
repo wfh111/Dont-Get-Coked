@@ -719,7 +719,12 @@ OminousFigure.prototype.update = function () {
 
 //0,512
 function Spike (game, spritesheet, lane) {
-	this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
+	if(bossFight && current_level === 3) {
+		this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
+	}
+	else{
+		this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
+	}
 	this.speed = 60;
 	this.ctx = game.ctx;
 	this.live = true;
@@ -730,7 +735,12 @@ function Spike (game, spritesheet, lane) {
     } else {
     	Entity.call(this, game, 255, -200);
     }
-	this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+	if(bossFight && current_level === 3) {
+		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+	}
+	else {
+		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+	}
 };
 
 Spike.prototype = new Entity();
@@ -742,7 +752,12 @@ Spike.prototype.update = function() {
 	this.y += this.game.clockTick * this.speed;
 	spike_x = this.x;
 	spike_y = this.y;
-	this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+	if(bossFight && current_level === 3) {
+		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+	}
+	else {
+		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+	}
 	Entity.prototype.update.call(this);
 };
 
@@ -1077,7 +1092,33 @@ Obstacle_Spawner.prototype.update = function () {
 	  	}
 	}
 	else if(bossFight && current_level === 3) {
-		
+		if(this.counter % Math.ceil(250 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 4;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  }
+		}
 	}
 	else if(bossFight && current_level === 4) {
 		
