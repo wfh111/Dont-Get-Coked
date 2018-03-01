@@ -459,7 +459,7 @@ PepsiMan.prototype.draw = function () {
   } else if (this.shootingInv) {
     this.shootInvincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y, 0.18);
   } else {
-      if (this.invincible) {
+      if (this.invincible || this.boostInvincible) {
         this.invincibleAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
       } else {
         this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.2);
@@ -634,7 +634,7 @@ PepsiMan.prototype.update = function () {
     	if(pwr instanceof Booster && this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
     		boostSound.play();
     		this.boosted = true;
-    		this.invincible = true;
+    		this.boostInvincible = true;
     	}
     	if((pwr instanceof Burger || pwr instanceof Popsicle || pwr instanceof Icecream || pwr instanceof Pizza)
     			&& this.boundingbox.collide(pwr.boundingbox) && pwr.live) {
@@ -1504,8 +1504,8 @@ Powerup_Spawner.prototype.update = function () {
 	if(!bossFight) {
 		if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
 			var type = Math.floor(Math.random() * 100) + 1;
-			type %= 4;
-//			type = 0; //Testing individual powerup
+//			type %= 4;
+			type = 2; //Testing individual powerup
 			var lane = Math.floor(Math.random() * 10) + 1;
 			lane %= 3;
 //			lane = 0; //Test specific lane
