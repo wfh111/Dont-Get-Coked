@@ -1516,8 +1516,8 @@ Powerup_Spawner.prototype.update = function () {
 	if(!bossFight) {
 		if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
 			var type = Math.floor(Math.random() * 100) + 1;
-//			type %= 4;
-			type = 2; //Testing individual powerup
+			type %= 4;
+//			type = 2; //Testing individual powerup
 			var lane = Math.floor(Math.random() * 10) + 1;
 			lane %= 3;
 //			lane = 0; //Test specific lane
