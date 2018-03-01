@@ -342,6 +342,9 @@ gameOver.prototype.update = function() {
 	if (this.game.running && this.game.over) {
 		this.game.running = false;
 	}
+	if (this.game.click && !this.game.running && this.game.over) {
+		this.game.reset();
+	}
 }
 
 gameOver.prototype.draw = function(ctx) {
@@ -358,6 +361,14 @@ gameOver.prototype.draw = function(ctx) {
 
 }
 
+gameOver.prototype.reset = function() {
+	this.score = 0;
+	gameScore = 0;
+	this.running = true;
+	this.over = false;
+	
+}
+
 function sound(src) {
 	this.sound = document.createElement("audio");
 	this.sound.src = src;
@@ -372,6 +383,7 @@ function sound(src) {
         this.sound.pause();
     }
 }
+
 
 
 
@@ -1666,6 +1678,7 @@ AM.downloadAll(function () {
     gameEngine.running = false;
     gameEngine.over = false;
     gameEngine.noSG = false;
+    
     var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
