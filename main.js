@@ -342,6 +342,9 @@ gameOver.prototype.update = function() {
 	if (this.game.running && this.game.over) {
 		this.game.running = false;
 	}
+	if (this.game.click) {
+		this.game.running = true;
+	}
 }
 
 gameOver.prototype.draw = function(ctx) {
@@ -356,6 +359,14 @@ gameOver.prototype.draw = function(ctx) {
 		ctx.fillText("COKE HAS TAKEN OVER!", 40, 550);
 	}
 
+}
+
+gameOver.prototype.reset = function() {
+	this.score = 0;
+	gameScore = 0;
+	this.running = true;
+	this.over = false;
+	
 }
 
 function sound(src) {
@@ -373,12 +384,6 @@ function sound(src) {
     }
 }
 
-gameOver.prototype.reset = function() {
-	this.score = 0;
-	gameScore = 0;
-	this.running = true;
-	this.over = false;
-}
 
 
 
