@@ -438,6 +438,7 @@ function PepsiMan(game, spritesheet) {
     this.prevTime = this.game.clockTick;
     this.prevTimeM = this.game.clockTick;
     this.ctx = game.ctx;
+    this.boostInvincible = false;
 	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 290, this.animation.frameHeight - 530);
 }
 
@@ -477,16 +478,15 @@ PepsiMan.prototype.update = function () {
     }
     this.currentTime += this.game.clockTick;
     if (this.invincible) {
-//    	console.log(this.currentTime - this.prevTime); //Bug Check
     	if (this.currentTime - this.prevTime >= 10) {
     		this.invincible = false;
     	}
     }
     if (this.boosted) {
-    	this.invincible= true;
+    	this.boostInvincible = true;
     	if(this.y <= 100) {
     		this.boosted = false;
-    		this.invincible = false;
+    		this.boostInvincible = false;
     	}
     	this.y -= 1;
     }
@@ -500,7 +500,7 @@ PepsiMan.prototype.update = function () {
     	jumpSound.play();
     	this.jumping = true;
     }
-    if (this.game.jumpButton && this.invincible) {
+    if (this.game.jumpButton && this.invincible && this.boostInvincible) {
     	jumpSound.play();
     	this.jumpingInv = true;
     }
@@ -650,28 +650,28 @@ PepsiMan.prototype.update = function () {
     }
     for (var i = 0; i < this.game.obstacles.length; i++) {
     	var ob = this.game.obstacles[i];
-    	if(ob instanceof Spike && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.jumping && ob.live) {
+    	if(ob instanceof Spike && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.boostInvincible && !this.jumping && ob.live) {
     		spikeSound.play();
     		this.y += this.game.clockTick * ob.speed;
     		this.stuck = true;
     		this.spike = ob;
     	}
-    	if(ob instanceof Oil && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
+    	if(ob instanceof Oil && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.boostInvincible) {
     		oilSound.play();
     		this.y += this.game.clockTick * 60;
     		ob.live = false;
     	}
-    	else if(ob instanceof Branch && this.boundingbox.collide(ob.boundingbox) && !this.invincible) {
+    	else if(ob instanceof Branch && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.boostInvincible) {
     		branchSound.play();
     		this.y += this.game.clockTick * 100;
     		ob.live = false;
     	}
-    	else if(ob instanceof Target_Coke && this.boundingbox.collide(ob.boundingbox) && !this.jumping && ob.live && !this.invincible) {
+    	else if(ob instanceof Target_Coke && this.boundingbox.collide(ob.boundingbox) && !this.jumping && ob.live && !this.invincible && !this.boostInvincible) {
     		cokecanSound.play();
     		this.y += (this.game.clockTick * 2000) * current_level / 2;
     		ob.live = false;
     	}
-    	else if((ob instanceof Wall || ob instanceof Crate) && this.boundingbox.collide(ob.boundingbox) && !this.invincible && ob.live) {
+    	else if((ob instanceof Wall || ob instanceof Crate) && this.boundingbox.collide(ob.boundingbox) && !this.invincible && !this.boostInvincible && ob.live) {
     		crateSound.play();
     		this.y += this.game.clockTick * ob.speed;
     	}
