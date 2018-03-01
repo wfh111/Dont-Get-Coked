@@ -342,7 +342,7 @@ gameOver.prototype.update = function() {
 	if (this.game.running && this.game.over) {
 		this.game.running = false;
 	}
-	if (this.game.click) {
+	if (this.game.click && !this.game.running && this.game.over) {
 		this.game.reset();
 	}
 }
