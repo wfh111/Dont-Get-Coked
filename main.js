@@ -373,6 +373,13 @@ function sound(src) {
     }
 }
 
+gameOver.prototype.reset = function() {
+	this.score = 0;
+	gameScore = 0;
+	this.running = true;
+	this.over = false;
+}
+
 
 
 function LevelDisplay(game, color, x, y) {
@@ -1523,6 +1530,7 @@ AM.downloadAll(function () {
     gameEngine.running = false;
     gameEngine.over = false;
     gameEngine.noSG = false;
+    
     var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
