@@ -10,12 +10,13 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = false; //
+var bound_box = false;
+var bound_box = true;
 //var bound_box = true; //To test
 var gameEngine = new GameEngine();
 var chaser;
 var multiplier = 1;
-var bossFight = true;
+var bossFight = false;
 var backgroundSound;
 var crateSound; //done
 var spikeSound; //done
@@ -720,23 +721,38 @@ OminousFigure.prototype.update = function () {
 //0,512
 function Spike (game, spritesheet, lane) {
 	if(bossFight && current_level === 3) {
-		this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
+		this.animation = new Animation(spritesheet, 0, 4180, 300, 163, 1, 1, 1, true);
 	}
 	else{
-		this.animation = new Animation(spritesheet, 0, 2455, 142, 163, 1, 1, 1, true);
+		this.animation = new Animation(spritesheet, 15, 2457, 142, 163, 1, 1, 1, true);
 	}
 	this.speed = 60;
 	this.ctx = game.ctx;
 	this.live = true;
 	if (lane === 0) {
-    	Entity.call(this, game, 80, -200);
+		if(bossFight && current_level === 3){
+			Entity.call(this, game, 74, -200);
+		}
+		else {
+			Entity.call(this, game, 80, -200);
+		}
     } else if (lane === 1) {
-    	Entity.call(this, game, 167, -200);
+    	if(bossFight && current_level === 3) {
+    		Entity.call(this, game, 160, -200);
+    	}
+    	else {
+    		Entity.call(this, game, 167, -200);
+    	}
     } else {
-    	Entity.call(this, game, 255, -200);
+    	if(bossFight && current_level === 3){
+    		Entity.call(this,game, 245, -200);
+    	}
+    	else {
+    		Entity.call(this, game, 255, -200);
+    	}
     }
 	if(bossFight && current_level === 3) {
-		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 250, this.animation.frameHeight - 160);
 	}
 	else {
 		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
@@ -753,7 +769,7 @@ Spike.prototype.update = function() {
 	spike_x = this.x;
 	spike_y = this.y;
 	if(bossFight && current_level === 3) {
-		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
+		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 250, this.animation.frameHeight - 160);
 	}
 	else {
 		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 115, this.animation.frameHeight - 140);
@@ -769,13 +785,18 @@ Spike.prototype.draw = function () {
         this.ctx.strokeStyle = "yellow";
         this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
+	if(bossFight && current_level === 3) {
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.3);//0.4
+	}
+	else {
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.4);//0.4
+	}
     Entity.prototype.draw.call(this);
 };
 //0,0
 // inheritance
 function Crate(game, spritesheet, lane) {
-    this.animation = new Animation(spritesheet, 0, 1905, 512, 512, 810, 1, 1, true);
+    this.animation = new Animation(spritesheet, 0, 1907, 512, 512, 810, 1, 1, true);
     this.speed = 60;
     this.ctx = game.ctx;
     this.live = true;
@@ -1610,7 +1631,7 @@ AM.queueDownload("./img/bg3.png");
 AM.queueDownload("./img/bg4.png");
 AM.queueDownload("./img/bg5.png");
 AM.queueDownload("./img/bg6.png");
-AM.queueDownload("./img/obstacles.png");
+AM.queueDownload("./img/obstacles1.png");
 AM.queueDownload("./img/theboy.png");
 AM.queueDownload("./img/theboyi.png");
 AM.queueDownload("./img/jump.png");
@@ -1672,7 +1693,7 @@ AM.downloadAll(function () {
     gameEngine.init(ctx);
     gameEngine.start();
     var powerups = new Powerup_Spawner(gameEngine, AM.getAsset("./img/Powerups.png"));
-    var obstacleSpawner = new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles.png"));
+    var obstacleSpawner = new Obstacle_Spawner(gameEngine, AM.getAsset("./img/obstacles1.png"));
     chaser = new OminousFigure(gameEngine, AM.getAsset("./img/coke_sideways_figure.png"));
     gameEngine.addEntity(new Background4(gameEngine, AM.getAsset("./img/bg6.png")));
     gameEngine.addEntity(new Background3(gameEngine, AM.getAsset("./img/bg5.png")));
