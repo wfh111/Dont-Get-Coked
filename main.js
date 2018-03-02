@@ -201,7 +201,6 @@ Boss1.prototype.update = function () {
     if(this.hp === 0) {
     	this.live = false;
     	boss1_dead = true;
-    	//current_level += 1;
     }
 }
 
