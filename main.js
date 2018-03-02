@@ -228,7 +228,7 @@ Background2.prototype.draw = function () {
                      this.x, this.y - sheetHeight);
 
       // If the image scrolled off the screen, reset
-      if (this.speed < 5) {
+      if (this.speed < 5 || !boss2_dead) {
         if (this.y >= sheetHeight)
           this.y = 0;
       }
@@ -239,14 +239,101 @@ Background2.prototype.update = function () {
   if (this.speed <= 4.95 && boss1_dead) {
     this.speed *= 1.0001;
     background_speed = this.speed;
+  } else if (!boss2_dead && !boss2_spawned && boss1_dead) {
+    boss2_spawned = true;
+    currentBoss = new Boss2(gameEngine, AM.getAsset("./img/scorp_boss.png"));
+    gameEngine.addEntity(currentBoss);
+  }
+  if (boss2_dead && !level2_done) {
+    this.speed = 5.01;
+    background_speed = this.speed;
+    level2_done = true;
   }
 };
+
+// boss 2
+function Boss2(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 0, 0, 32, 64, 0.04, 6, true);
+    this.x = left_lane - 70;
+    this.y = -300;
+    this.speed = 1;
+    this.game = game;
+    this.hp = 30;
+    this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.going_down = true;
+    this.going_up = false;
+    this.ready_to_move = false;
+    this.ctx = game.ctx;
+    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+}
+
+Boss2.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "green";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 2);
+	}
+}
+
+Boss2.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (this.y != -100 && !this.ready_to_move) {
+		this.y += 1;
+    this.ready_to_move = true;
+	}
+    this.boundingbox = new BoundingBox(this.x + 160, this.y + 150, this.animation.frameWidth + 32, this.animation.frameHeight + 64);
+    console.log(this.hp);
+    if (this.ready_to_move) {
+      if (this.going_left && this.x >= left_lane - 150) {
+        this.x -= 2;
+      } else if (this.going_right && this.x <= right_lane - 150) {
+        this.x +=2;
+      } else {
+        if (this.x >= right_lane - 150) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 150) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+      var random_bottom_point = Math.floor(Math.random() * (350 - 200)) + 200;
+      if (this.going_down && this.y <= 0) {
+        this.y += 1;
+      } else if (this.going_up && this.y >= -random_bottom_point) {
+        this.y -= 2;
+      } else {
+        if (this.y >= 0) {
+          this.going_down = false;
+          this.going_up = true;
+        }
+        if (this.y <= -150) {
+          this.going_down = true;
+          this.going_up = false;
+        }
+      }
+
+    }
+    if(this.hp === 0) {
+    	this.live = false;
+    	boss2_dead = true;
+    	//current_level += 1;
+    }
+}
 
 // no inheritance
 function Background3(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = 3;
+    this.speed = 5.01;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
@@ -266,7 +353,7 @@ Background3.prototype.draw = function () {
                      this.x, this.y - sheetHeight);
 
       // If the image scrolled off the screen, reset
-      if (this.speed < 6) {
+      if (this.speed < 6 || !boss3_dead) {
         if (this.y >= sheetHeight)
           this.y = 0;
       }
@@ -1753,6 +1840,8 @@ AM.queueDownload("./sounds/multiplier.mp3");
 AM.queueDownload("./sounds/coke_can.mp3");
 AM.queueDownload("./sounds/Death.mp3");
 AM.queueDownload("./sounds/shooting.mp3");
+AM.queueDownload("./img/wall_summoner.png");
+AM.queueDownload("./img/scorp_boss.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
