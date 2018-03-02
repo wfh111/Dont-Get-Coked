@@ -37,6 +37,10 @@ var boss1_spawned = false;
 var boss2_spawned = false;
 var boss3_spawned = false;
 var boss4_spawned = false;
+var level1_done = false;
+var level2_done = false;
+var level3_done = false;
+var level4_done = false;
 var currentBoss;
 
 
@@ -126,13 +130,18 @@ Background.prototype.draw = function () {
 
 Background.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 3.15) {
+  if (this.speed <= 3.95) {
     this.speed *= 1.0001;
     background_speed = this.speed;
   } else if (!boss1_dead && !boss1_spawned) {
     boss1_spawned = true;
     currentBoss = new Boss1(gameEngine, AM.getAsset("./img/gup.png"));
     gameEngine.addEntity(currentBoss);
+  }
+  if (boss1_dead && !level1_done) {
+    this.speed = 4.01;
+    background_speed = this.speed;
+    level1_done = true;
   }
 };
 
@@ -145,6 +154,9 @@ function Boss1(game, spritesheet) {
     this.game = game;
     this.hp = 20;
     this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.ready_to_move = false;
     this.ctx = game.ctx;
     this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
 }
@@ -166,13 +178,30 @@ Boss1.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	if (this.y != -100) {
 		this.y += 1;
+    this.ready_to_move = true;
 	}
     this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
     console.log(this.hp);
+    if (this.ready_to_move){
+      if (this.going_left && this.x >= left_lane - 150) {
+        this.x -= 1;
+      } else if (this.going_right && this.x <= right_lane - 150) {
+        this.x +=1;
+      } else {
+        if (this.x >= right_lane - 150) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 150) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+    }
     if(this.hp === 0) {
     	this.live = false;
     	boss1_dead = true;
-    	current_level += 1;
+    	//current_level += 1;
     }
 }
 
@@ -180,7 +209,7 @@ Boss1.prototype.update = function () {
 function Background2(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = 3;
+    this.speed = 4.01;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
@@ -208,7 +237,7 @@ Background2.prototype.draw = function () {
 
 Background2.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 7 && boss1_dead) {
+  if (this.speed <= 4.95 && boss1_dead) {
     this.speed *= 1.0001;
     background_speed = this.speed;
   }
