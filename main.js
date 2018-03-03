@@ -11,11 +11,10 @@ var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
 var bound_box = false;
-//var bound_box = true;
+var bound_box = true;
 var gameEngine = new GameEngine();
 var chaser;
 var multiplier = 1;
-var bossFight = false;
 var backgroundSound;
 var crateSound; //done
 var spikeSound; //done
@@ -30,6 +29,19 @@ var jumpSound; //done
 var doubleSound; //done
 var boostSound; //done
 var gameoverSound;
+var boss1_dead = false;
+var boss2_dead = false;
+var boss3_dead = false;
+var boss4_dead = false;
+var boss1_spawned = false;
+var boss2_spawned = false;
+var boss3_spawned = false;
+var boss4_spawned = false;
+var level1_done = false;
+var level2_done = false;
+var level3_done = false;
+var level4_done = false;
+var currentBoss;
 
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
@@ -110,7 +122,7 @@ Background.prototype.draw = function () {
                      this.x, this.y - sheetHeight);
 
       // If the image scrolled off the screen, reset
-      if (this.speed < 4) {
+      if (this.speed < 4 || !boss1_dead) {
         if (this.y >= sheetHeight)
           this.y = 0;
       }
@@ -118,16 +130,86 @@ Background.prototype.draw = function () {
 
 Background.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 7) {
+  if (this.speed <= 3.95) {
     this.speed *= 1.0001;
     background_speed = this.speed;
+  } else if (!boss1_dead && !boss1_spawned) {
+    boss1_spawned = true;
+    currentBoss = new Boss1(gameEngine, AM.getAsset("./img/gup.png"));
+    gameEngine.addEntity(currentBoss);
+  }
+  if (boss1_dead && !level1_done) {
+    this.speed = 4.01;
+    background_speed = this.speed;
+    level1_done = true;
   }
 };
 
+// boss 1
+function Boss1(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 0, 0, 498, 500, 0.04, 59, true);
+    this.x = left_lane - 70;
+    this.y = -300;
+    this.speed = 1;
+    this.game = game;
+    this.hp = 20;
+    this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.ready_to_move = false;
+    this.ctx = game.ctx;
+    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+}
+
+Boss1.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.2);
+
+	}
+}
+
+Boss1.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (this.y != -100) {
+		this.y += 1;
+    this.ready_to_move = true;
+	}
+    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+    console.log(this.hp);
+    if (this.ready_to_move){
+      if (this.going_left && this.x >= left_lane - 150) {
+        this.x -= 1;
+      } else if (this.going_right && this.x <= right_lane - 150) {
+        this.x +=1;
+      } else {
+        if (this.x >= right_lane - 150) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 150) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+    }
+    if(this.hp <= 0) {
+    	this.live = false;
+    	boss1_dead = true;
+    }
+}
+
+// no inheritance
 function Background2(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = 3;
+    this.speed = 4.01;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
@@ -147,7 +229,7 @@ Background2.prototype.draw = function () {
                      this.x, this.y - sheetHeight);
 
       // If the image scrolled off the screen, reset
-      if (this.speed < 5) {
+      if (this.speed < 5 || !boss2_dead) {
         if (this.y >= sheetHeight)
           this.y = 0;
       }
@@ -155,17 +237,104 @@ Background2.prototype.draw = function () {
 
 Background2.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 7) {
+  if (this.speed <= 4.95 && boss1_dead) {
     this.speed *= 1.0001;
     background_speed = this.speed;
+  } else if (!boss2_dead && !boss2_spawned && boss1_dead) {
+    boss2_spawned = true;
+    currentBoss = new Boss2(gameEngine, AM.getAsset("./img/scorp_boss.png"));
+    gameEngine.addEntity(currentBoss);
+  }
+  if (boss2_dead && !level2_done) {
+    this.speed = 5.01;
+    background_speed = this.speed;
+    level2_done = true;
   }
 };
+
+// boss 2
+function Boss2(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 0, 0, 32, 64, 0.04, 6, true);
+    this.x = left_lane - 70;
+    this.y = -300;
+    this.speed = 1;
+    this.game = game;
+    this.hp = 30;
+    this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.going_down = true;
+    this.going_up = false;
+    this.ready_to_move = false;
+    this.ctx = game.ctx;
+    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+}
+
+Boss2.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "green";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 2);
+	}
+}
+
+Boss2.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (this.y != -100 && !this.ready_to_move) {
+		this.y += 1;
+    this.ready_to_move = true;
+	}
+    this.boundingbox = new BoundingBox(this.x + 160, this.y + 150, this.animation.frameWidth, this.animation.frameHeight);
+    console.log(this.hp);
+    if (this.ready_to_move) {
+      if (this.going_left && this.x >= left_lane - 150) {
+        this.x -= 2;
+      } else if (this.going_right && this.x <= right_lane - 150) {
+        this.x +=2;
+      } else {
+        if (this.x >= right_lane - 150) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 150) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+      var random_bottom_point = Math.floor(Math.random() * (350 - 200)) + 200;
+      if (this.going_down && this.y <= 0) {
+        this.y += 1;
+      } else if (this.going_up && this.y >= -random_bottom_point) {
+        this.y -= 2;
+      } else {
+        if (this.y >= 0) {
+          this.going_down = false;
+          this.going_up = true;
+        }
+        if (this.y <= -150) {
+          this.going_down = true;
+          this.going_up = false;
+        }
+      }
+
+    }
+    if(this.hp <= 0) {
+    	this.live = false;
+    	boss2_dead = true;
+    	//current_level += 1;
+    }
+}
 
 // no inheritance
 function Background3(game, spritesheet) {
     this.x = 0;
     this.y = 0;
-    this.speed = 3;
+    this.speed = 5.01;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
@@ -185,7 +354,7 @@ Background3.prototype.draw = function () {
                      this.x, this.y - sheetHeight);
 
       // If the image scrolled off the screen, reset
-      if (this.speed < 6) {
+      if (this.speed < 6 || !boss3_dead) {
         if (this.y >= sheetHeight)
           this.y = 0;
       }
@@ -193,18 +362,105 @@ Background3.prototype.draw = function () {
 
 Background3.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 7) {
+  if (this.speed <= 5.95 && boss1_dead && boss2_dead) {
     this.speed *= 1.0001;
     background_speed = this.speed;
+  } else if (!boss3_dead && !boss3_spawned && boss1_dead && boss2_dead) {
+    boss3_spawned = true;
+    currentBoss = new Boss3(gameEngine, AM.getAsset("./img/ice_king.png"));
+    gameEngine.addEntity(currentBoss);
+  }
+  if (boss3_dead && !level3_done) {
+    this.speed = 6.01;
+    background_speed = this.speed;
+    level3_done = true;
   }
 };
+
+// boss 3
+function Boss3(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 4, 0, 57.16, 62, 0.06, 5, true);
+    this.x = left_lane - 70;
+    this.y = -300;
+    this.speed = 1;
+    this.game = game;
+    this.hp = 40;
+    this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.going_down = true;
+    this.going_up = false;
+    this.ready_to_move = false;
+    this.ctx = game.ctx;
+    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+}
+
+Boss3.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "blue";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 1.3);
+	}
+}
+
+Boss3.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (this.y != -100 && !this.ready_to_move) {
+		this.y += 1;
+    this.ready_to_move = true;
+	}
+    this.boundingbox = new BoundingBox(this.x + 150, this.y + 105, this.animation.frameWidth, this.animation.frameHeight);
+    console.log(this.hp);
+    if (this.ready_to_move) {
+      if (this.going_left && this.x >= left_lane - 150) {
+        this.x -= 2;
+      } else if (this.going_right && this.x <= right_lane - 150) {
+        this.x +=2;
+      } else {
+        if (this.x >= right_lane - 150) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 150) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+      var random_bottom_point = Math.floor(Math.random() * (350 - 200)) + 200;
+      if (this.going_down && this.y <= 0) {
+        this.y += 1;
+      } else if (this.going_up && this.y >= -random_bottom_point) {
+        this.y -= 2;
+      } else {
+        if (this.y >= 0) {
+          this.going_down = false;
+          this.going_up = true;
+        }
+        if (this.y <= -150) {
+          this.going_down = true;
+          this.going_up = false;
+        }
+      }
+
+    }
+    if(this.hp <= 0) {
+    	this.live = false;
+    	boss3_dead = true;
+    	//current_level += 1;
+    }
+}
 
 // no inheritance
 function Background4(game, spritesheet) {
 
     this.x = 0;
     this.y = 0;
-    this.speed = 3;
+    this.speed = 6.01;
     this.spritesheet = spritesheet;
     this.game = game;
     this.ctx = game.ctx;
@@ -230,11 +486,98 @@ Background4.prototype.draw = function () {
 
 Background4.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 7) {
-    this.speed *= 1.0001;
+  if (this.speed <= 6.5 && boss1_dead && boss2_dead && boss3_dead) {
+    this.speed *= 1.00004;
     background_speed = this.speed;
+  } else if (!boss4_dead && !boss4_spawned && boss1_dead && boss2_dead && boss3_dead) {
+    boss4_spawned = true;
+    currentBoss = new Boss4(gameEngine, AM.getAsset("./img/wizard idle.png"));
+    gameEngine.addEntity(currentBoss);
+  }
+  if (boss4_dead && !level4_done) {
+    this.speed = 6.55;
+    background_speed = this.speed;
+    level4_done = true;
   }
 };
+
+// boss 4
+function Boss4(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 0, 0, 160, 160, 0.06, 4, true);
+    this.x = left_lane - 70;
+    this.y = -300;
+    this.speed = 1;
+    this.game = game;
+    this.hp = 60;
+    this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.going_down = true;
+    this.going_up = false;
+    this.ready_to_move = false;
+    this.ctx = game.ctx;
+    this.boundingbox = new BoundingBox(this.x  + 190, this.y + 140, this.animation.frameWidth - 100, this.animation.frameHeight - 80);
+}
+
+Boss4.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "purple";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 1);
+	}
+}
+
+Boss4.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (this.y != -100 && !this.ready_to_move) {
+		this.y += 1;
+    this.ready_to_move = true;
+	}
+    this.boundingbox = new BoundingBox(this.x  + 190, this.y + 140, this.animation.frameWidth - 100, this.animation.frameHeight - 80);
+    console.log(this.hp);
+    if (this.ready_to_move) {
+      if (this.going_left && this.x >= left_lane - 200) {
+        this.x -= 2;
+      } else if (this.going_right && this.x <= right_lane - 160) {
+        this.x +=2;
+      } else {
+        if (this.x >= right_lane - 160) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 200) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+      var random_bottom_point = Math.floor(Math.random() * (350 - 200)) + 200;
+      if (this.going_down && this.y <= 0) {
+        this.y += 1;
+      } else if (this.going_up && this.y >= -random_bottom_point) {
+        this.y -= 2;
+      } else {
+        if (this.y >= 0) {
+          this.going_down = false;
+          this.going_up = true;
+        }
+        if (this.y <= -150) {
+          this.going_down = true;
+          this.going_up = false;
+        }
+      }
+
+    }
+    if(this.hp <= 0) {
+    	this.live = false;
+    	boss4_dead = true;
+    	//current_level += 1;
+    }
+}
 
 function BoundingBox(x, y, width, height) {
     this.x = x;
@@ -365,7 +708,7 @@ gameOver.prototype.reset = function() {
 	gameScore = 0;
 	this.running = true;
 	this.over = false;
-	
+
 }
 
 function sound(src) {
@@ -693,7 +1036,7 @@ PepsiMan.prototype.update = function () {
     else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
     }
-	if (this.boundingbox.collide(chaser.boundingbox)) {
+	if (this.boundingbox.collide(chaser.boundingbox) || (currentBoss instanceof Boss2 && currentBoss.live && this.boundingbox.collide(currentBoss.boundingbox))) {
 		gameoverSound.play();
 		console.log("Game Over");
 		this.game.finalScore = this.score;
@@ -730,7 +1073,8 @@ OminousFigure.prototype.update = function () {
 
 //0,512
 function Spike (game, spritesheet, lane) {
-	if(bossFight && current_level === 3) {
+	this.currentLvl = current_level;
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.animation = new Animation(spritesheet, 0, 4180, 300, 163, 1, 1, 1, true);
 	}
 	else{
@@ -740,28 +1084,28 @@ function Spike (game, spritesheet, lane) {
 	this.ctx = game.ctx;
 	this.live = true;
 	if (lane === 0) {
-		if(bossFight && current_level === 3){
+		if(boss3_spawned && this.currentLvl === 3){
 			Entity.call(this, game, 74, -200);
 		}
 		else {
 			Entity.call(this, game, 80, -200);
 		}
     } else if (lane === 1) {
-    	if(bossFight && current_level === 3) {
+    	if(boss3_spawned && this.currentLvl === 3) {
     		Entity.call(this, game, 160, -200);
     	}
     	else {
     		Entity.call(this, game, 167, -200);
     	}
     } else {
-    	if(bossFight && current_level === 3){
+    	if(boss3_spawned && this.currentLvl === 3){
     		Entity.call(this,game, 245, -200);
     	}
     	else {
     		Entity.call(this, game, 255, -200);
     	}
     }
-	if(bossFight && current_level === 3) {
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 250, this.animation.frameHeight - 160);
 	}
 	else {
@@ -778,7 +1122,7 @@ Spike.prototype.update = function() {
 	this.y += this.game.clockTick * this.speed;
 	spike_x = this.x;
 	spike_y = this.y;
-	if(bossFight && current_level === 3) {
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 250, this.animation.frameHeight - 160);
 	}
 	else {
@@ -795,7 +1139,7 @@ Spike.prototype.draw = function () {
         this.ctx.strokeStyle = "yellow";
         this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
-	if(bossFight && current_level === 3) {
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.3);//0.4
 	}
 	else {
@@ -1014,7 +1358,7 @@ Obstacle_Spawner.prototype.constructor = Obstacle_Spawner;
 
 Obstacle_Spawner.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-	if(!bossFight && current_level === 1) {
+	if(!boss1_spawned && current_level === 1) {
 		if(this.counter % Math.ceil(250 / background_speed) === 0){
 			var type = Math.floor(Math.random() * 100) + 1;
 			  type %= 4;
@@ -1043,7 +1387,7 @@ Obstacle_Spawner.prototype.update = function () {
 			  }
 		}
 	}
-	else if(!bossFight && current_level === 2) {
+	else if(!boss2_spawned && current_level === 2) {
 		if(this.counter % Math.ceil(325 / background_speed) === 0){
 			var type = Math.floor(Math.random() * 100) + 1;
 			  type %= 4;
@@ -1074,7 +1418,7 @@ Obstacle_Spawner.prototype.update = function () {
 			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
 		}
 	}
-	else if(!bossFight && current_level >= 3) {
+	else if(!boss3_spawned && current_level === 3) {
 		if(this.counter % Math.ceil(325 / background_speed) === 0){
 			var type = Math.floor(Math.random() * 100) + 1;
 			  type %= 5;
@@ -1110,20 +1454,56 @@ Obstacle_Spawner.prototype.update = function () {
 			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
 		}
 	}
-	else if(bossFight && current_level === 1) {
+	else if(!boss4_spawned && current_level === 4) {
+		if(this.counter % Math.ceil(285 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 5;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+//			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  case 4: //Wall
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));
+				  	break;
+			  }
+		} else if(this.counter % Math.ceil(800 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
+	}
+	else if(boss1_spawned && !boss1_dead) {
 		if(this.counter % Math.ceil(150 / background_speed) === 0) {
 			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
 		}
 	}
-	else if(bossFight && current_level === 2) {
+	else if(boss2_spawned && !boss2_dead) {
 		if(this.counter % Math.ceil(210 / background_speed) === 0) {
 			this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
 		  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
-		  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));		
+		  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));
 	  	}
 	}
-	else if(bossFight && current_level === 3) {
-		if(this.counter % Math.ceil(250 / background_speed) === 0){
+	else if(boss3_spawned && !boss3_dead) {
+		if(this.counter % Math.ceil(220 / background_speed) === 0){
 			var type = Math.floor(Math.random() * 100) + 1;
 			  type %= 4;
 //			  type = 0; //Testing individual obstacles
@@ -1150,9 +1530,41 @@ Obstacle_Spawner.prototype.update = function () {
 				  	break;
 			  }
 		}
+		if(this.counter % Math.ceil(550 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
 	}
-	else if(bossFight && current_level === 4) {
-		
+	else if(boss4_spawned && !boss4_dead) {
+		if(this.counter % Math.ceil(150 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 4;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  }
+		}
+		if(this.counter % Math.ceil(350 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
 	}
 	var numObstacle = this.obstacles.length;
 	for(i = 0; i < numObstacle; i++) {
@@ -1512,7 +1924,7 @@ Powerup_Spawner.prototype.update = function () {
 //		  lane = 0; //Test powerup in specific lane
 		  this.powerups.push(new Invincible(this.game, this.spritesheet, lane));
 	}
-	if(!bossFight) {
+	if((!boss1_spawned || boss1_dead) && (!boss2_spawned || boss2_dead) && (!boss3_spawned || boss3_dead) && (!boss4_spawned || boss4_dead)) {
 		if (this.counter % Math.ceil(6780 / background_speed) === 0 && this.counter !== 0) { //6780
 			var type = Math.floor(Math.random() * 100) + 1;
 			type %= 4;
@@ -1553,7 +1965,7 @@ Powerup_Spawner.prototype.update = function () {
 			}
 		}
 	}
-	if (bossFight) {
+	else if ((boss1_spawned || !boss1_dead) && (boss2_spawned || !boss2_dead) && (boss3_spawned || !boss3_dead) && (boss4_spawned || !boss4_dead)) {
 		if (this.counter % Math.ceil(175 / background_speed) === 0 && this.counter !== 0) { //1785
 			var type = Math.floor(Math.random() * 100) + 1;
 			type %= 4;
@@ -1635,6 +2047,22 @@ Bullet.prototype.update = function () {
 			ob.live = false;
 		}
 	}
+	if(currentBoss instanceof Boss1 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss1_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
+	if(currentBoss instanceof Boss2 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss2_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
+	if(currentBoss instanceof Boss3 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss3_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
+	if(currentBoss instanceof Boss4 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss4_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
 }
 
 AM.queueDownload("./img/bg3.png");
@@ -1648,6 +2076,7 @@ AM.queueDownload("./img/jump.png");
 AM.queueDownload("./img/jumpi.png");
 AM.queueDownload("./img/shoot.png");
 AM.queueDownload("./img/shooti.png");
+AM.queueDownload("./img/gup.png");
 AM.queueDownload("./img/coke_sideways_figure.png");
 AM.queueDownload("./img/Powerups.png");
 AM.queueDownload("./img/pep16v2.png");
@@ -1667,6 +2096,10 @@ AM.queueDownload("./sounds/multiplier.mp3");
 AM.queueDownload("./sounds/coke_can.mp3");
 AM.queueDownload("./sounds/Death.mp3");
 AM.queueDownload("./sounds/shooting.mp3");
+AM.queueDownload("./img/wall_summoner.png");
+AM.queueDownload("./img/scorp_boss.png");
+AM.queueDownload("./img/ice_king.png");
+AM.queueDownload("./img/wizard idle.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
@@ -1677,7 +2110,7 @@ AM.downloadAll(function () {
     gameEngine.running = false;
     gameEngine.over = false;
     gameEngine.noSG = false;
-    
+
     var SG = new startScreen(gameEngine, AM.getAsset("./img/newpepsi.jpg"), 0, 0);
     gameEngine.addEntity(SG);
     console.log(SG);
@@ -1685,7 +2118,7 @@ AM.downloadAll(function () {
     var GO = new gameOver(gameEngine, AM.getAsset("./img/newcoke.jpg"), 0, 0);
     gameEngine.addEntity(GO);
     console.log(GO);
-    
+
     oilSound = new sound("./sounds/slip.mp3");
     spikeSound = new sound("./sounds/spike.mp3");
     crystalSound = new sound("./sounds/invincible.mp3");
@@ -1699,7 +2132,7 @@ AM.downloadAll(function () {
     cokecanSound = new sound("./sounds/coke_can.mp3");
     gameoverSound = new sound("./sounds/Death.mp3");
     shootingSound = new sound("./sounds/shooting.mp3");
-    
+
 
     gameEngine.init(ctx);
     gameEngine.start();
