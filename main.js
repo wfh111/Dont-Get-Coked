@@ -1035,7 +1035,7 @@ PepsiMan.prototype.update = function () {
     else {
     	this.boundingbox = new BoundingBox(this.x + 20, this.y + 50, this.animation.frameWidth  - 310, this.animation.frameHeight - 530);
     }
-	if (this.boundingbox.collide(chaser.boundingbox)) {
+	if (this.boundingbox.collide(chaser.boundingbox) || (currentBoss instanceof Boss2 && currentBoss.live && this.boundingbox.collide(currentBoss.boudningbox))) {
 		gameoverSound.play();
 		console.log("Game Over");
 		this.game.finalScore = this.score;
