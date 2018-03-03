@@ -1416,7 +1416,7 @@ Obstacle_Spawner.prototype.update = function () {
 			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
 		}
 	}
-	else if(!boss3_spawned && current_level >= 3) {
+	else if(!boss3_spawned && current_level === 3) {
 		if(this.counter % Math.ceil(325 / background_speed) === 0){
 			var type = Math.floor(Math.random() * 100) + 1;
 			  type %= 5;
@@ -1449,6 +1449,42 @@ Obstacle_Spawner.prototype.update = function () {
 				  	break;
 			  }
 		} else if(this.counter % Math.ceil(1240 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
+	}
+	else if(!boss4_spawned && current_level === 4) {
+		if(this.counter % Math.ceil(285 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 5;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+//			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  case 4: //Wall
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 0));
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 1));
+				  	this.obstacles.push(new Wall(this.game, this.spritesheet, 2));
+				  	break;
+			  }
+		} else if(this.counter % Math.ceil(800 / background_speed) === 0) {
 			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
 		}
 	}
