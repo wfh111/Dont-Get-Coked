@@ -10,7 +10,7 @@ var right_change = 0;
 var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
-var bound_box = true;
+var bound_box = false;
 //var bound_box = true;
 var gameEngine = new GameEngine();
 var chaser;
@@ -485,11 +485,98 @@ Background4.prototype.draw = function () {
 
 Background4.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
-  if (this.speed <= 7 && boss1_dead && boss2_dead && boss3_dead) {
-    this.speed *= 1.0001;
+  if (this.speed <= 6.5 && boss1_dead && boss2_dead && boss3_dead) {
+    this.speed *= 1.00004;
     background_speed = this.speed;
+  } else if (!boss4_dead && !boss4_spawned && boss1_dead && boss2_dead && boss3_dead) {
+    boss4_spawned = true;
+    currentBoss = new Boss4(gameEngine, AM.getAsset("./img/wizard idle.png"));
+    gameEngine.addEntity(currentBoss);
+  }
+  if (boss4_dead && !level4_done) {
+    this.speed = 6.55;
+    background_speed = this.speed;
+    level4_done = true;
   }
 };
+
+// boss 4
+function Boss4(game, spritesheet) {
+    this.animation = new Animation(spritesheet, 0, 0, 160, 160, 0.06, 4, true);
+    this.x = left_lane - 70;
+    this.y = -300;
+    this.speed = 1;
+    this.game = game;
+    this.hp = 60;
+    this.live = true;
+    this.going_left = true;
+    this.going_right = false;
+    this.going_down = true;
+    this.going_up = false;
+    this.ready_to_move = false;
+    this.ctx = game.ctx;
+    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+}
+
+Boss4.prototype.draw = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (bound_box) {
+//      this.ctx.strokeStyle = "red";
+//      this.ctx.strokeRect(this.x, this.y, this.animation.frameWidth, this.animation.frameHeight);
+      this.ctx.strokeStyle = "purple";
+      this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+  }
+	if(this.live){
+		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 1);
+	}
+}
+
+Boss4.prototype.update = function () {
+	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if (this.y != -100 && !this.ready_to_move) {
+		this.y += 1;
+    this.ready_to_move = true;
+	}
+    this.boundingbox = new BoundingBox(this.x + 150, this.y + 105, this.animation.frameWidth, this.animation.frameHeight);
+    console.log(this.hp);
+    if (this.ready_to_move) {
+      if (this.going_left && this.x >= left_lane - 200) {
+        this.x -= 2;
+      } else if (this.going_right && this.x <= right_lane - 160) {
+        this.x +=2;
+      } else {
+        if (this.x >= right_lane - 160) {
+          this.going_right = false;
+          this.going_left = true;
+        }
+        if (this.x <= left_lane - 200) {
+          this.going_right = true;
+          this.going_left = false;
+        }
+      }
+      var random_bottom_point = Math.floor(Math.random() * (350 - 200)) + 200;
+      if (this.going_down && this.y <= 0) {
+        this.y += 1;
+      } else if (this.going_up && this.y >= -random_bottom_point) {
+        this.y -= 2;
+      } else {
+        if (this.y >= 0) {
+          this.going_down = false;
+          this.going_up = true;
+        }
+        if (this.y <= -150) {
+          this.going_down = true;
+          this.going_up = false;
+        }
+      }
+
+    }
+    if(this.hp <= 0) {
+    	this.live = false;
+    	boss3_dead = true;
+    	//current_level += 1;
+    }
+}
 
 function BoundingBox(x, y, width, height) {
     this.x = x;
@@ -1974,6 +2061,7 @@ AM.queueDownload("./sounds/shooting.mp3");
 AM.queueDownload("./img/wall_summoner.png");
 AM.queueDownload("./img/scorp_boss.png");
 AM.queueDownload("./img/ice_king.png");
+AM.queueDownload("./img/wizard idle.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("gameWorld");
