@@ -11,7 +11,7 @@ var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
 var bound_box = false;
-//var bound_box = true;
+var bound_box = true;
 var gameEngine = new GameEngine();
 var chaser;
 var multiplier = 1;
@@ -135,6 +135,7 @@ Background.prototype.update = function () {
     background_speed = this.speed;
   } else if (!boss1_dead && !boss1_spawned) {
     boss1_spawned = true;
+//    currentBoss = new Boss1(gameEngine, AM.getAsset("./img/gup.png"));
     currentBoss = new Boss1(gameEngine, AM.getAsset("./img/gup.png"));
     gameEngine.addEntity(currentBoss);
   }
@@ -171,6 +172,7 @@ Boss1.prototype.draw = function () {
   }
 	if(this.live){
 		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x + 150, this.y + 100, 0.2);
+
 	}
 }
 
@@ -515,7 +517,7 @@ function Boss4(game, spritesheet) {
     this.going_up = false;
     this.ready_to_move = false;
     this.ctx = game.ctx;
-    this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
+    this.boundingbox = new BoundingBox(this.x  + 190, this.y + 140, this.animation.frameWidth - 100, this.animation.frameHeight - 80);
 }
 
 Boss4.prototype.draw = function () {
@@ -537,7 +539,7 @@ Boss4.prototype.update = function () {
 		this.y += 1;
     this.ready_to_move = true;
 	}
-    this.boundingbox = new BoundingBox(this.x + 150, this.y + 105, this.animation.frameWidth, this.animation.frameHeight);
+    this.boundingbox = new BoundingBox(this.x  + 190, this.y + 140, this.animation.frameWidth - 100, this.animation.frameHeight - 80);
     console.log(this.hp);
     if (this.ready_to_move) {
       if (this.going_left && this.x >= left_lane - 200) {
@@ -573,7 +575,7 @@ Boss4.prototype.update = function () {
     }
     if(this.hp <= 0) {
     	this.live = false;
-    	boss3_dead = true;
+    	boss4_dead = true;
     	//current_level += 1;
     }
 }
@@ -2057,10 +2059,10 @@ Bullet.prototype.update = function () {
 		this.live = false;
 		currentBoss.hp -= 1;
 	}
-//	if(currentBoss instanceof Boss4 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss4_dead) {
-//		this.live = false;
-//		currentBoss.hp -= 1;
-//	}
+	if(currentBoss instanceof Boss4 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss4_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
 }
 
 AM.queueDownload("./img/bg3.png");
