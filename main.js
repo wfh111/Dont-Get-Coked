@@ -288,7 +288,7 @@ Boss2.prototype.update = function () {
 		this.y += 1;
     this.ready_to_move = true;
 	}
-    this.boundingbox = new BoundingBox(this.x + 160, this.y + 150, this.animation.frameWidth + 32, this.animation.frameHeight + 64);
+    this.boundingbox = new BoundingBox(this.x + 160, this.y + 150, this.animation.frameWidth, this.animation.frameHeight);
     console.log(this.hp);
     if (this.ready_to_move) {
       if (this.going_left && this.x >= left_lane - 150) {
@@ -413,7 +413,7 @@ Boss3.prototype.update = function () {
 		this.y += 1;
     this.ready_to_move = true;
 	}
-    this.boundingbox = new BoundingBox(this.x + 160, this.y + 150, this.animation.frameWidth + 32, this.animation.frameHeight + 64);
+    this.boundingbox = new BoundingBox(this.x + 150, this.y + 105, this.animation.frameWidth, this.animation.frameHeight);
     console.log(this.hp);
     if (this.ready_to_move) {
       if (this.going_left && this.x >= left_lane - 150) {
@@ -1378,7 +1378,7 @@ Obstacle_Spawner.prototype.update = function () {
 	  	}
 	}
 	else if(boss3_spawned && !boss3_dead) {
-		if(this.counter % Math.ceil(250 / background_speed) === 0){
+		if(this.counter % Math.ceil(220 / background_speed) === 0){
 			var type = Math.floor(Math.random() * 100) + 1;
 			  type %= 4;
 //			  type = 0; //Testing individual obstacles
@@ -1405,9 +1405,41 @@ Obstacle_Spawner.prototype.update = function () {
 				  	break;
 			  }
 		}
+		if(this.counter % Math.ceil(550 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
 	}
 	else if(boss4_spawned && !boss4_dead) {
-
+		if(this.counter % Math.ceil(150 / background_speed) === 0){
+			var type = Math.floor(Math.random() * 100) + 1;
+			  type %= 4;
+//			  type = 0; //Testing individual obstacles
+			  var lane = Math.floor(Math.random() * 10) + 1;
+			  lane %= 3;
+			  lane = 0; //Test obstacle in specific lane
+			  while(lane === this.previous) {
+				  lane = Math.floor(Math.random() * 10) + 1;
+				  lane %= 3;
+			  }
+			  this.previous = lane;
+			  switch(type) {
+			  case 0: //Spikes
+			  		this.obstacles.push(new Spike(this.game, this.spritesheet, lane));
+			  		break;
+			  case 1: //Crate
+			      	this.obstacles.push(new Crate(this.game, this.spritesheet, lane));
+			      	break;
+			  case 2: //Oil
+				  	this.obstacles.push(new Oil(this.game, this.spritesheet, lane));
+				  	break;
+			  case 3: //Branch
+				  	this.obstacles.push(new Branch(this.game, this.spritesheet, lane));
+				  	break;
+			  }
+		}
+		if(this.counter % Math.ceil(350 / background_speed) === 0) {
+			this.obstacles.push(new Target_Coke(this.game, this.spritesheet, current_lane));
+		}
 	}
 	var numObstacle = this.obstacles.length;
 	for(i = 0; i < numObstacle; i++) {
@@ -1894,6 +1926,18 @@ Bullet.prototype.update = function () {
 		this.live = false;
 		currentBoss.hp -= 1;
 	}
+	if(currentBoss instanceof Boss2 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss2_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
+	if(currentBoss instanceof Boss3 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss3_dead) {
+		this.live = false;
+		currentBoss.hp -= 1;
+	}
+//	if(currentBoss instanceof Boss4 && this.boundingbox.collide(currentBoss.boundingbox) && this.live && !boss4_dead) {
+//		this.live = false;
+//		currentBoss.hp -= 1;
+//	}
 }
 
 AM.queueDownload("./img/bg3.png");
