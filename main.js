@@ -135,7 +135,6 @@ Background.prototype.update = function () {
     background_speed = this.speed;
   } else if (!boss1_dead && !boss1_spawned) {
     boss1_spawned = true;
-//    currentBoss = new Boss1(gameEngine, AM.getAsset("./img/gup.png"));
     currentBoss = new Boss1(gameEngine, AM.getAsset("./img/gup.png"));
     gameEngine.addEntity(currentBoss);
   }
