@@ -124,7 +124,6 @@ Background.prototype.update = function () {
   }
 };
 
-// no inheritance
 function Background2(game, spritesheet) {
     this.x = 0;
     this.y = 0;
