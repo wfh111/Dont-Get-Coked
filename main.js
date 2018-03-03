@@ -11,7 +11,7 @@ var gameScore = 0;
 var current_level = 1;
 var background_speed = 3;
 var bound_box = false;
-var bound_box = true;
+//var bound_box = true;
 var gameEngine = new GameEngine();
 var chaser;
 var multiplier = 1;
