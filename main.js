@@ -1074,7 +1074,8 @@ OminousFigure.prototype.update = function () {
 
 //0,512
 function Spike (game, spritesheet, lane) {
-	if(boss3_spawned && current_level === 3) {
+	this.currentLvl = current_level;
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.animation = new Animation(spritesheet, 0, 4180, 300, 163, 1, 1, 1, true);
 	}
 	else{
@@ -1084,28 +1085,28 @@ function Spike (game, spritesheet, lane) {
 	this.ctx = game.ctx;
 	this.live = true;
 	if (lane === 0) {
-		if(boss3_spawned && current_level === 3){
+		if(boss3_spawned && this.currentLvl === 3){
 			Entity.call(this, game, 74, -200);
 		}
 		else {
 			Entity.call(this, game, 80, -200);
 		}
     } else if (lane === 1) {
-    	if(boss3_spawned && current_level === 3) {
+    	if(boss3_spawned && this.currentLvl === 3) {
     		Entity.call(this, game, 160, -200);
     	}
     	else {
     		Entity.call(this, game, 167, -200);
     	}
     } else {
-    	if(boss3_spawned && current_level === 3){
+    	if(boss3_spawned && this.currentLvl === 3){
     		Entity.call(this,game, 245, -200);
     	}
     	else {
     		Entity.call(this, game, 255, -200);
     	}
     }
-	if(boss3_spawned && current_level === 3) {
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 250, this.animation.frameHeight - 160);
 	}
 	else {
@@ -1122,7 +1123,7 @@ Spike.prototype.update = function() {
 	this.y += this.game.clockTick * this.speed;
 	spike_x = this.x;
 	spike_y = this.y;
-	if(boss3_spawned && current_level === 3) {
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.boundingbox = new BoundingBox(this.x + 15, this.y + 40, this.animation.frameWidth - 250, this.animation.frameHeight - 160);
 	}
 	else {
@@ -1139,7 +1140,7 @@ Spike.prototype.draw = function () {
         this.ctx.strokeStyle = "yellow";
         this.ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
-	if(boss3_spawned && current_level === 3) {
+	if(boss3_spawned && this.currentLvl === 3) {
 		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, 0.3);//0.4
 	}
 	else {
