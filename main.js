@@ -198,7 +198,7 @@ Boss1.prototype.update = function () {
         }
       }
     }
-    if(this.hp === 0) {
+    if(this.hp <= 0) {
     	this.live = false;
     	boss1_dead = true;
     }
@@ -322,7 +322,7 @@ Boss2.prototype.update = function () {
       }
 
     }
-    if(this.hp === 0) {
+    if(this.hp <= 0) {
     	this.live = false;
     	boss2_dead = true;
     	//current_level += 1;
@@ -447,7 +447,7 @@ Boss3.prototype.update = function () {
       }
 
     }
-    if(this.hp === 0) {
+    if(this.hp <= 0) {
     	this.live = false;
     	boss3_dead = true;
     	//current_level += 1;
