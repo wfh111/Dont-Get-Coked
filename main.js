@@ -42,6 +42,7 @@ var level2_done = false;
 var level3_done = false;
 var level4_done = false;
 var currentBoss;
+var click = false;
 
 
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
@@ -145,6 +146,10 @@ Background.prototype.update = function () {
   }
 };
 
+Background.prototype.reset = function() {
+	level1_done = false;
+}
+
 // boss 1
 function Boss1(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 498, 500, 0.04, 59, true);
@@ -205,6 +210,11 @@ Boss1.prototype.update = function () {
     }
 }
 
+Boss1.prototype.reset = function() {
+	this.live = false;
+	boss1_dead = false;
+}
+
 // no inheritance
 function Background2(game, spritesheet) {
     this.x = 0;
@@ -251,6 +261,10 @@ Background2.prototype.update = function () {
     level2_done = true;
   }
 };
+
+Background2.prototype.reset = function() {
+	level2_done = false;
+}
 
 // boss 2
 function Boss2(game, spritesheet) {
@@ -329,6 +343,10 @@ Boss2.prototype.update = function () {
     	//current_level += 1;
     }
 }
+Boss2.prototype.reset = function() {
+	this.live = false;
+	boss2_dead = false;
+}
 
 // no inheritance
 function Background3(game, spritesheet) {
@@ -376,6 +394,10 @@ Background3.prototype.update = function () {
     level3_done = true;
   }
 };
+
+Background3.prototype.reset = function() {
+	level3_done = false;
+}
 
 // boss 3
 function Boss3(game, spritesheet) {
@@ -455,6 +477,11 @@ Boss3.prototype.update = function () {
     }
 }
 
+Boss3.prototype.reset = function() {
+	this.live = false;
+	boss3_dead = false;
+}
+
 // no inheritance
 function Background4(game, spritesheet) {
 
@@ -500,6 +527,10 @@ Background4.prototype.update = function () {
     level4_done = true;
   }
 };
+
+Background4.prototype.reset = function() {
+	level4_done = false;
+}
 
 // boss 4
 function Boss4(game, spritesheet) {
@@ -579,6 +610,11 @@ Boss4.prototype.update = function () {
     }
 }
 
+Boss4.prototype.reset = function() {
+	this.live = false;
+	boss4_dead = false;
+}
+
 function BoundingBox(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -629,6 +665,10 @@ function startScreen(game, img, x, y) {
 	Entity.call(this, game, x, y);
 }
 
+Score.prototype.reset = function() {
+	
+}
+
 startScreen.prototype = new Entity();
 startScreen.prototype.constructor = startScreen;
 
@@ -669,6 +709,10 @@ startScreen.prototype.draw = function(ctx) {
 	}
 }
 
+startScreen.prototype.reset = function() {
+	
+}
+
 function gameOver(game, img, x, y) {
 	this.img = img;
 	this.x = x;
@@ -684,9 +728,24 @@ gameOver.prototype.update = function() {
 	if (this.game.running && this.game.over) {
 		this.game.running = false;
 	}
-	if (this.game.click && !this.game.running && this.game.over) {
+	if (this.game.bButton && !this.game.running && this.game.over) {
+		console.log(click);
+		click = true;
+	}
+	if(click && !this.game.running && this.game.over) {
 		this.game.reset();
 	}
+		
+}
+
+gameOver.prototype.reset = function() {
+	this.game.running = true;
+	this.game.over = false;
+	background_speed = 3;
+	gameScore = 0;
+	this.game.score = 0;
+	current_level = 1;
+	click = false;
 }
 
 gameOver.prototype.draw = function(ctx) {
@@ -700,14 +759,6 @@ gameOver.prototype.draw = function(ctx) {
 		ctx.font = "20pt Arial";
 		ctx.fillText("COKE HAS TAKEN OVER!", 40, 550);
 	}
-
-}
-
-gameOver.prototype.reset = function() {
-	this.score = 0;
-	gameScore = 0;
-	this.running = true;
-	this.over = false;
 
 }
 
@@ -725,9 +776,6 @@ function sound(src) {
         this.sound.pause();
     }
 }
-
-
-
 
 function LevelDisplay(game, color, x, y) {
 	this.color = color;
@@ -760,6 +808,10 @@ LevelDisplay.prototype.draw = function() {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
 	this.ctx.fillText("LEVEL " + current_level, this.x, this.y);
 };
+
+LevelDisplay.prototype.reset = function() {
+	
+}
 
 //original animation spritesheet, 189, 230, 5, 0.10, 14, true,1
 function PepsiMan(game, spritesheet) {
@@ -824,6 +876,9 @@ PepsiMan.prototype.draw = function () {
 
 PepsiMan.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
+	if(click && !this.game.running && this.game.over) {
+		this.game.reset();
+	}
     //if (this.animation.elapsedTime < this.animation.totalTime * 8 / 14)
     //this.x += this.game.clockTick * this.speed;
     //if (this.x > 400) this.x = 0;
@@ -1046,6 +1101,30 @@ PepsiMan.prototype.update = function () {
 	}
 }
 
+PepsiMan.prototype.reset = function() {
+	this.jumping = false;
+    this.jumpingInv = false;
+    this.x = middle_lane;
+    this.y = 150;
+    this.groundY;
+    this.speed = 8;
+    this.Right = false;
+    this.Left = false;
+    this.shooting = false;
+    this.shootingInv = false;
+    this.fired = false;
+    this.firedInv = false;
+    this.stuck = false;
+    this.invincible = false;
+    this.multiplierActive = false;
+    this.boosted = false;
+    this.spike;
+    this.currentTime = this.game.clockTick;
+    this.prevTime = this.game.clockTick;
+    this.prevTimeM = this.game.clockTick;
+    this.boostInvincible = false;
+}
+
 function OminousFigure(game, spritesheet) {
     this.animation = new Animation(spritesheet, 0, 0, 201.2, 117.7, 0.07, 14, true);
     this.x = -left_lane - 20;
@@ -1069,6 +1148,10 @@ OminousFigure.prototype.draw = function () {
 
 OminousFigure.prototype.update = function () {
 	if(!this.game.running || (!this.game.running && this.game.over)) return;
+}
+
+OminousFigure.prototype.reset = function() {
+	
 }
 
 //0,512
@@ -1580,6 +1663,12 @@ Obstacle_Spawner.prototype.draw = function () {
 		this.obstacles[i].draw();
 	}
 };
+
+Obstacle_Spawner.prototype.reset = function() {
+//	this.obstacles = [];
+//	this.counter = 0;
+//	this.previous = -1;
+}
 function Invincible (game, spritesheet, lane) {
 	this.animation = new Animation(spritesheet, 0, 92, 76, 75, .1, 16, true, false);
 	this.speed = 60;
@@ -2002,6 +2091,10 @@ Powerup_Spawner.prototype.draw = function () {
 		this.powerups[i].draw();
 	}
 };
+
+Powerup_Spawner.prototype.reset = function() {
+	
+}
 
 // bullet
 function Bullet(game, spritesheet, pepsimane) {

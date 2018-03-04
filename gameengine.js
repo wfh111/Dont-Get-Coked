@@ -35,6 +35,12 @@ GameEngine.prototype.start = function () {
     })();
 }
 
+GameEngine.prototype.reset = function() {
+	for (var i = 0; i < this.entities.length; i++) {
+        this.entities[i].reset();
+    }
+}
+
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
 
@@ -55,6 +61,10 @@ GameEngine.prototype.startInput = function () {
         if (e.keyCode == 32) {
           console.log("space/jump");
           that.jumpButton = true;
+        }
+        if (e.keyCode == 66) {
+        	console.log("b press");
+        	that.bButton = true;
         }
 
         //        console.log(e);
@@ -80,6 +90,10 @@ GameEngine.prototype.startInput = function () {
         if (e.keyCode == 32) {
           console.log("space/jump");
           that.jumpButton = false;
+        }
+        if (e.keyCode == 66) {
+        	console.log("b press");
+        	that.bButton = false;
         }
         console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
@@ -212,6 +226,10 @@ function Entity(game, x, y) {
 }
 
 Entity.prototype.update = function () {
+}
+
+Entity.prototype.reset = function() {
+	
 }
 
 Entity.prototype.draw = function (ctx) {
