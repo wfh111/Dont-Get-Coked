@@ -182,7 +182,6 @@ Boss1.prototype.update = function () {
     this.ready_to_move = true;
 	}
     this.boundingbox = new BoundingBox(this.x + 160, this.y, this.animation.frameWidth - 430, this.animation.frameHeight - 320);
-    console.log(this.hp);
     if (this.ready_to_move){
       if (this.going_left && this.x >= left_lane - 150) {
         this.x -= 1;
@@ -290,7 +289,6 @@ Boss2.prototype.update = function () {
     this.ready_to_move = true;
 	}
     this.boundingbox = new BoundingBox(this.x + 160, this.y + 150, this.animation.frameWidth, this.animation.frameHeight);
-    console.log(this.hp);
     if (this.ready_to_move) {
       if (this.going_left && this.x >= left_lane - 150) {
         this.x -= 2;
@@ -415,7 +413,6 @@ Boss3.prototype.update = function () {
     this.ready_to_move = true;
 	}
     this.boundingbox = new BoundingBox(this.x + 150, this.y + 105, this.animation.frameWidth, this.animation.frameHeight);
-    console.log(this.hp);
     if (this.ready_to_move) {
       if (this.going_left && this.x >= left_lane - 150) {
         this.x -= 2;
@@ -539,7 +536,6 @@ Boss4.prototype.update = function () {
     this.ready_to_move = true;
 	}
     this.boundingbox = new BoundingBox(this.x  + 190, this.y + 140, this.animation.frameWidth - 100, this.animation.frameHeight - 80);
-    console.log(this.hp);
     if (this.ready_to_move) {
       if (this.going_left && this.x >= left_lane - 200) {
         this.x -= 2;
